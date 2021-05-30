@@ -1,0 +1,19 @@
+version: '3'
+services:
+  # winpty docker-compose exec mysql mysql -uroot -ppass test
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+    volumes:
+      - ./ms.sql:/docker-entrypoint-initdb.d/ms.sql
+  kafka:
+    image: martinnowak/kafka
+  # winpty docker-compose exec clickhouse clickhouse-client -nm
+  clickhouse:
+    image: yandex/clickhouse-server:21.3
+    #volumes:
+    #- ./ch.sql:/docker-entrypoint-initdb.d/ch.sql
+    # - ./ch/format_schemas/:/var/lib/clickhouse/format_schemas/
+    depends_on:
+    - mysql
