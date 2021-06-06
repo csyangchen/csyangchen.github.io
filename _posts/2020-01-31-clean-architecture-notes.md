@@ -2,7 +2,7 @@
 title: Clean Architecture 阅读笔记
 ---
 
-ref: https://book.douban.com/subject/26915970/
+ref: <https://book.douban.com/subject/26915970/>
 
 - 编程层面 (搬砖砌墙):
   - 结构化编程: 模块拆分, 函数, 功能解耦
@@ -37,4 +37,4 @@ ref: https://book.douban.com/subject/26915970/
 
 软件开发三活动: Make it work / right / fast.
 
-好的架构, 将所有的细节具体的决定, 推迟到最后一刻.
+**好的架构, 将所有的细节具体的决定, 推迟到最后一刻.**
