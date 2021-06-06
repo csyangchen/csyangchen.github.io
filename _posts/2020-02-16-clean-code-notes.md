@@ -86,8 +86,3 @@ Kent Simple Rule:
 - Minimal Code / 追求最少代码
 
 不要满足工作的代码, 不断小步重构, TDD的方式验证每一步的正确性.
-
-ref: https://book.douban.com/subject/27154352/
-
-*表示个人发散点*
-
