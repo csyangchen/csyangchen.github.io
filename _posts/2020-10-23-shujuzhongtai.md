@@ -40,15 +40,18 @@ title: 数据中台 阅读笔记
 
 - ADS / 应用数据层
 - TDW / 标签数据层
-    - ID mapping问题
+  - ID mapping / (Entity Identification Problem) 问题
 - DW / 统一数仓
+  - Data Warehouse vs Data Lake: 个人理解区别
+    - 计算存储分离, 不锁定具体实现
+    - 入库数据避免过度清洗 (因为会洗错, 会丢信息)
 - ODS / 贴源数据
 
 数据体系(个人理解)
 
 - 日志 / 不变性 / Log
-- 维度数据 / 变更 / KV
-- 冗余/切面数据(业务/报表/计算数据)
+- 维度数据 / 会变更 / KV
+- 冗余 / 切面数据 (业务/报表/计算数据)
 
 # 数据资产管理 / 数据治理
 
