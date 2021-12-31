@@ -1,0 +1,19 @@
+# post链接不要日期
+# http://jekyllrb.com/docs/permalinks/
+permalink: none
+
+# 默认post样式
+defaults:
+-
+  scope:
+    path: ""
+    type: "posts"
+  values:
+    layout: "post"
+
+gems:
+- jekyll-feed
+
+
+title: csyangchen
+author: csyangchen
