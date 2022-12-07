@@ -128,6 +128,20 @@ Guido"退休"后在微软"养老"的[Faster CPython](https://github.com/faster-c
 
 其实每次版本发布都有非常多的性能优化点记录在`#optimizations`章节, 这也是我们跟着版本升级后, 除了新特性外, 直接享受的改善.
 
+拿一个jieba分词测试的结果
+
+```
+2.7.18 load_sec=0.77 calc_sec=8.84
+3.5.10 load_sec=0.71 calc_sec=8.79
+3.6.15 load_sec=0.61 calc_sec=8.53
+3.7.15 load_sec=0.59 calc_sec=8.36
+3.8.15 load_sec=0.58 calc_sec=8.04
+3.9.15 load_sec=0.57 calc_sec=7.98
+3.10.8 load_sec=0.51 calc_sec=7.34
+3.11.0 load_sec=0.50 calc_sec=6.50
+```
+
+
 PY脚本主要图方便灵活, 或者说的不好听一些, 当作胶水语言.
 "正常"的程序, 主要瓶颈一定在于于外部IO交互, 涉及计算密集的一般委派到对应的库实现,
 因此针对PY语言本省的性能优化其实大概不一定是个非常重要的事情.
