@@ -1,4 +1,5 @@
 .*
 *.iml
 *.ipynb
-_posts
+_posts/
+_drafts/
