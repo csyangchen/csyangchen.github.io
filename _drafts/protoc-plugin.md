@@ -5,7 +5,7 @@ title: protoc plugin 机制
 
 proto 文件本身 用 proto 描述.
 
-stdin CodeGeneratorRequest -> stdout: CodeGeneratorResponse  
+stdin CodeGeneratorRequest -> stdout: CodeGeneratorResponse
 
 因此不返回任何内容也是ok的
 
