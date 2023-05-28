@@ -12,11 +12,13 @@ title: Python并发网络编程
 
 需要用户态的轻量的多路任务调度机制
 
-## Python GIL
+# GIL
 
 https://docs.python.org/3/glossary.html#term-global-interpreter-lock
 
-同时只能一个线程计算, 不能充分利用多核, 对于计算密集型的任务比较受限
+为了简化GC角度, 同时只能一个线程计算, 不能充分利用多核, 对于计算密集型的任务比较受限
+
+不过也有新的提案去掉GIL, 不过是个困难的工程
 
 # coroutine / 协程 / 蝇程 / 用户态进程
 
@@ -33,22 +35,25 @@ generator vs coroutine
 iterator / generator / yield / yield from
 coroutine yield =
 
-# gevent & greenlet
+# libev / libuv 
 
-pior: eventlet
+## gevent & greenlet
+
+
+
+eventlet
 
 http://www.gevent.org/
 
-`from gevent import monkey; monkey.patch_all()`
-
 https://www.joelsleppy.com/blog/gunicorn-async-workers-with-gevent/
 
-## 
-tornado / twisted / ...
+## tornado
+
+## twisted
+
+爬虫框架在用
 
 # asyncio / async && await
-
-TODO
 
 # WSGI
 
