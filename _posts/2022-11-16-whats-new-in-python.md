@@ -122,7 +122,11 @@ Guido"退休"后在微软"养老"的[Faster CPython](https://github.com/faster-c
 从发布记录里面看, 主要是通过预加载编译代码提高启动速度; 运行时优化/复用调用栈, inline函数调用, 部分实现了尾递归优化(?), 以及类似JIT的执行机制.
 感觉和JVM的优化手段思路一致.
 
-由于各种依赖的问题, 目前业务代码还升不能升级上来, 升级后针对业务代码做下测试对比.
+https://github.com/faster-cpython/ideas/issues
+
+# [3.12](https://docs.python.org/3/whatsnew/3.12.html)
+
+爱写comprehension的有福了, [PEP 709](https://peps.python.org/pep-0709/) 将表达式内联, 不创造匿名的函数, 从而优化性能
 
 # PY性能优化
 
@@ -140,7 +144,6 @@ Guido"退休"后在微软"养老"的[Faster CPython](https://github.com/faster-c
 3.10.8 load_sec=0.51 calc_sec=7.34
 3.11.0 load_sec=0.50 calc_sec=6.50
 ```
-
 
 PY脚本主要图方便灵活, 或者说的不好听一些, 当作胶水语言.
 "正常"的程序, 主要瓶颈一定在于于外部IO交互, 涉及计算密集的一般委派到对应的库实现,
