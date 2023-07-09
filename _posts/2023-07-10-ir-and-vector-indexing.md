@@ -1,48 +1,77 @@
 ---
 title: 检索技术及向量数据库
+published: false
 ---
 
-数据库基础索引缺陷及诉求
-
-- hash / O(1): 等值检索
-- b-tree / O(log(N)): 全排序检索
+数据库基础索引
+- 哈希 / hash / O(1): 等值检索
+- 排序树 / b-tree / O(log(N)): 全排序检索
   - 数值检索
   - 前缀/后缀匹配
 
-一般不能同时充分利用多个索引信息 (多临时序列高效求交问题), 查询计划的索引选择及选择性判定问题
+难点: 充分利用多个索引信息 (多临时序列高效求交问题), 查询计划的索引选择及选择性判定问题
+
+常见索引优化策略:
+- `select id from user where email=?`
+- 单独对不定长字段构建索引开销较大, 且检索可能会慢
+- 分区: `partition by email[0]`
+- 辅助索引: `index digest(email)`
 
 业务诉求:
+- 最长前缀/后缀序列匹配:
+   - 场景: 是否收录域名公司
+   - 场景: 是否可能见过的实体名
+     - {雕牌肥皂, 丽水雕牌} -> {雕牌}
+     - 不好解决: {丽水雕牌肥皂} -> {雕牌}
+- 给定子序列检索: `LIKE '%XXX%'`
+   - 场景: 关键词回溯任务
+- 距离检索: `select ... where bit_count(x ^ y) < d`
+   - 场景: 相似图片判重/推荐
 
-1. 精准全文检索: `LIKE %XYZ%`
-2. 距离检索: `select ... where bit_count(x ^ y) < d`
-   - 天真的办法, 额外辅助索引 `idx_bit_count = bit_count(x)`
-   - `where idx_bit_count between bit_count(y) - d and bit_count(y) + d and bit_count(x^y) < d`, 筛选性太低
-   - `where idx_bit_count = bit_count(y)`, 损失太多, 假设一定1位数目相同只是位置不同
-   - 其他基于传统数据库的索引的办法么?
+天真的办法: 额外辅助索引 `idx_bit_count = bit_count(x)`
+- `where idx_bit_count between bit_count(y) - d and bit_count(y) + d and bit_count(x^y) < d`, 筛选性太低
+- `where idx_bit_count = bit_count(y)`, 损失太多, 假设一定1位数目相同只是位置不同
+- 常见索引优化策略/天真办法的思路至少是合理的: 长数据找个短标示便于辅助索引, 等值判定后再后过滤, 一定损失换速度
 
 # 字符串匹配算法 / string matching
 
-Q: `word in text` 是如何实现的?
+Q: `needle in haystack` 是如何实现的?
 
 - naive: - / O(mn) / -
-- Rabin–Karp: O(m) / O(n) ~ O(mn) / O(1) 
-- Boyer–Moore–Horspool: O(m+k) / O(n/m) ~ O(mn) / O(k)
-  - k: 
-- KMP: O(m) / O(n) / O(m)
+- Rabin–Karp: O(m) / O(n) ~ O(mn) / O(1)
+  - 对子序列定义一个数值函数, 等值比较相等后才详细校验, 否则跳过
+  - 计算函数: 幂和, 可基于前值增量计算, 开窗长度m
+  - 预处理: 提前算完needle的"特征值"
+- KMP (Knuth-Morris-Pratt): O(m) / O(n) / O(m)
   - 构建前缀回溯字典
-- AC: KMP变种, 一心多用, 同时匹配多词
+- BM (Boyer–Moore): O(m+k) / O(n/m) ~ O(mn) / O(k)
+  - 额外预处理换平均计算复杂度
+  - k: 词表大小
+  - 字符串匹配算法的基线
+- AC (Aho–Corasick): KMP变种, 一心多用, 同时匹配多词
 - Two-Way: O(m) / O(n) / O(log(m))
-- 针对多行匹配, 预处理构建可以忽略
+  - 前向KMP, 后向BM
+- 针对多数据过滤, 预处理构建可以忽略, 实际应用中, 更关注额外空间开销及最差复杂度
 
-Python: 短文本 Boyer–Moore–Horspool, 长文本 Two-Way
+> 哲思: 失败是成功之母, 从不匹配中尽可能抽取有用的信息
+
+Python: 短文本 Boyer–Moore–Horspool (BM简化版), 长文本 Two-Way
 
 <https://github.com/python/cpython/blob/main/Objects/stringlib/fastsearch.h>
 
-# 正则匹配 / DFA / NFA
+字符串匹配自动机
+- DFA: Deterministic Finite Automata
+- FSM: finite state machine
+- 匹配树 -> 回退指针 / backtrack
+- 结点: 匹配状态
+- 中止结点: 完全匹配
+- 正则匹配: NFA
 
-TODO
+检索: 针对海量的haystack文本构建有效的索引结构, 从而快速框定小样本目标数据
 
-# 文本检索
+# 检索
+
+information retrieval / search / full-text search / ...
 
 备忘
 - characters / 字母 / alphabet
@@ -56,7 +85,7 @@ TODO
 ## 检索诉求
 
 - 子序列匹配: `LIKE '%XXX%'`
-- 逻辑检索 (boolean search): term1 AND term2 AND NOT term3
+- 逻辑检索 (boolean search): `term1 AND term2 AND NOT term3`
   - 输入不需再分词等预处理, 最基础检索形式
 - 普通检索: 允许命中文档不包含检索词, 基于输入文档及检索文档相似度排序返回
 - 近邻匹配 (proximity search): 对检索词先后顺序/相对距离额外要求, 后处理过滤掉
@@ -81,18 +110,21 @@ bag of words / BoW
 - 优点: 极大数据压缩
 - 缺点:
   - 丢失序列信息: 美国/比/中国/强 = 中国/比/美国/强
-  - 不能做语义近似检索
+  - 严重依赖于词表选择及分词质量
   - 视作表征向量时是极端高维且稀疏的
+  - 语义近似检索效果不好, 同一个概念上千种表述方式, 无法都通过同义词方式召回回来
 
 ## 倒排索引 / inverted index
 
 - 有损存储: `{term: {doc_id: freq}, ...}`
 - 无损存储: `{term: {doc_id: [offset, ...]}, ...}`
-  - 可用于支持临近搜索, 但存储显著增长
+  - 可用于支持临近搜索, 但存储需求显著增长
 
 检索过程: 输入预处理 -> 查找倒排索引 -> 求交 -> 后处理 -> 评分排序
 
 ## 搜索场景分词诉求
+
+分词 / parser / tokenizer / cut / ...
 
 带入数据分布先验做数据压缩
 
@@ -106,10 +138,16 @@ bag of words / BoW
 ## n-gram index
 
 - 对文档做n-gram冗余分词索引
-  - min_gram > 1 / 认为单字检索意义不大了
+  - min_gram > 1 / 或使用停用词
   - max_gram 不可能检索所有数据, 数据爆炸了
 - 搜索时只需要一种切法即可
   - `LIKE '%XXXYY%'` XXX及YY后再处理判定位置是否链接, 同精准匹配
+
+场景: IDE搜索
+
+https://dev.mysql.com/doc/refman/5.7/en/fulltext-search-ngram.html
+
+https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-ngram-tokenizer.html
 
 ## 编辑距离检索
 
@@ -161,11 +199,11 @@ Levenshtein automata
 - 词袋向量加权IoU
 - 互信息最大化
 
-DEMO here
+DEMO TIME
 
 # 词向量
 
-词嵌入 / embedding
+词嵌入 / Embedding
 
 词包模型:
 - 简单容易解释
@@ -189,7 +227,7 @@ DEMO here
   - {番茄炒鸡蛋, 西红柿炒鸡蛋} -> 番茄 ~ 鸡蛋, 番茄 = 西红柿
 - 通过共现体现出短语的不同语义
   - "river bank" vs "bank of china"
-- 初步的词间逻辑关系抽取
+- 初步的逻辑关系抽取
   - 北京 + 中国 - 法国 = 巴黎
   - 3D区不能没有__, 就像西方不能失去耶路撒冷
 
@@ -230,6 +268,19 @@ LSA矩阵维度: 词表 x 主题
 
 相似的文档, 表征的文档向量应相似, 因此可直接检索文档向量做语义搜索
 
+## gensim / fasttext
+
+传统NLP艺能工具
+
+gensim.models.LsiModel / gensim.word2vec
+
+fasttext: 
+- 加速训练手段
+  - hierarchical softmax
+  - n-gram 忽略顺序
+- 量化手段减少模型大小
+- 训练推断封装, 鼓励直接命令行使用, "外行"都能用
+
 # 哈希 / 特征向量
 
 > hash: chopped meat mixed with potatoes and browned
@@ -262,66 +313,53 @@ LSH曲解为机器学习的表征函数
 
 # 距离检索手段
 
-低维: GIS, 地图临近搜索
+低维: 空间索引, GIS, 地图临近搜索, L1/L2度量
 
-高维: 向量空间检索
+高维: 向量检索
 
 ## 树索引检索
 
 R-Tree 针对低维空间
 
-每个节点是一个空间闭包 (pos_min, pos_max), 从而可以范围索引确定
-树的每一层"纸盒"不交
-构建索引目标: 用最少的纸盒把房间中的点包住, 尽可能的留白
+R=rectangle. 每个节点是一个空间闭包 (pos_min, pos_max), 从而可以范围索引确定
+构建索引目标: 用最少的纸盒把房间中的点包住, 且尽可能的留白
+和B-Tree结构类似
 
 针对高维空间是否仍然有效 ??? 过于稀疏, 筛选性低
 
-k-dimensional binary tree
+KD-Tree / k-dimensional binary tree
 
-复习决策树 / decision-tree 生成手段, 每个维度当作一个特征分量, 从筛选性最高的分量开始切割.
+复习决策树 / decision-tree 生成手段, 每个维度当作一个特征分量, 从筛选性(方差)最高的分量开始切
 
 ## 图结构检索
 
-0. 构建KNN图, 如知道容许筛选最大距离则更好办可做成精确检索
-1. 遍历直到距离超过筛选阈值
-2. 计算实际距离二次过滤, 需基于距离特性: `d(x, z) <= d(x, y) + d(y, z)`
+- 构建KNN图, 如知道容许筛选最大距离则更好办可做成精确检索
+- 遍历直到距离超过筛选阈值
+- 计算实际距离二次过滤, 需基于距离特性: `d(x, z) <= d(x, y) + d(y, z)`
 
 Q: 不同于地图寻路, 如何定位开始检索的节点?
 
-# 量化手段
+## 量化手段
 
-向量量化 / 你可以说它是LSH
+向量量化 / 也可以理解为一种LSH
 
 主要是为了确保量化前后计算的评分(这里严谨点, 不说度量)不发生较大变化, 因此需要先确定评分函数后针对性的量化 
 
-暴力裁减: `float32[256] > 0 -> bit[256] = 64byte = uint64`
-
-单分量做数值统计压缩
-
-多分量分组聚类, 减少存储开销
-
-矩阵整体做PCA抽特征后降维
+- 暴力裁减/映射: `float32[256] > mean -> bit[256] = 64byte = uint64`
+- 基于单分量数值分布压缩, 如分位数化
+- 矩阵整体做PCA抽特征后降维
+- 多分量分组聚类, 减少存储开销
+- 减少数据量就是最好的计算优化
 
 不同于模型参数压缩/量化: 模型压缩需要考虑矩阵计算便利性, 以及点乘结果的尽可能少扰动
 
-# gensim / fasttext
-
-传统NLP艺能工具
-
-gensim.models.LsiModel / gensim.word2vec
-
-fasttext: 
-- 加速训练手段
-  - hierarchical softmax
-  - n-gram 忽略顺序
-- 量化手段减少模型大小
-- 训练推断封装, 鼓励直接命令行使用, "外行"都能用
-
 # faiss
 
-https://github.com/facebookresearch/faiss
+https://github.com/facebookresearch/faiss/wiki
 
 NOTE CODE HERE
+
+首先不要瞧不起暴力/线性索引, 通过向量计算, 加mmap减少内存, 小场景还是可以满足诉求的
 
 # 向量数据库
 
@@ -337,7 +375,5 @@ https://www.infoq.cn/article/saw52ys9ymut3c2zb9wp
 - 指令并行, 单机计算上GPU
 - 数据结构/算法优化/量化近似
 - 常规数据库功能整合
-- 模型推导相关功能整合
-  - 缓存模型中间计算结果, 用检索开销换昂贵的模型推导开销 ???
 
 ES/PostgreSQL+插件, 你也可以说它是向量数据库

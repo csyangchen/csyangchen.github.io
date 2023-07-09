@@ -11,8 +11,6 @@ published: false
 - nested data structure
 - bitmap
 
-
-
 # 外部互联
 
 kafka
