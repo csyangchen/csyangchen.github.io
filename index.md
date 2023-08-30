@@ -6,7 +6,7 @@ title: csyangchen's blog
 ## About
 
 - Name: csyangchen
-- Email: {Name} AT hotmail.com
+- E-mail: {Name} AT hotmail.com
 
 ## Posts
 

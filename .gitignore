@@ -1,4 +1,4 @@
 .*
 *.iml
-*.ipynb
-_drafts/
+_site/
+Gemfile.lock

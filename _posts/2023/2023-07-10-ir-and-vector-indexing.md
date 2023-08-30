@@ -1,34 +1,40 @@
 ---
 title: 检索技术及向量数据库
-published: false
 ---
 
-数据库基础索引
+基础索引
 - 哈希 / hash / O(1): 等值检索
 - 排序树 / b-tree / O(log(N)): 全排序检索
   - 数值检索
   - 前缀/后缀匹配
 
-难点: 充分利用多个索引信息 (多临时序列高效求交问题), 查询计划的索引选择及选择性判定问题
+数据库索引难点:
+- 不光算法考量, 还有实际IO考量
+- 充分利用多个索引信息 (多临时序列高效求交问题), 查询计划的索引选择及选择性判定问题
 
 常见索引优化策略:
-- `select id from user where email=?`
-- 单独对不定长字段构建索引开销较大, 且检索可能会慢
-- 分区: `partition by email[0]`
-- 辅助索引: `index digest(email)`
+- `select id from user where name=?` 不定长字段构建索引存储开销较大
+- 定长辅助索引节约存储开销: `index digest(name)`
+- 数据分区, 减少单词查找索引所需深度: `partition by name[:2]`
 
-业务诉求:
-- 最长前缀/后缀序列匹配:
-   - 场景: 是否收录域名公司
-   - 场景: 是否可能见过的实体名
-     - {雕牌肥皂, 丽水雕牌} -> {雕牌}
-     - 不好解决: {丽水雕牌肥皂} -> {雕牌}
-- 给定子序列检索: `LIKE '%XXX%'`
-   - 场景: 关键词回溯任务
-- 距离检索: `select ... where bit_count(x ^ y) < d`
-   - 场景: 相似图片判重/推荐
+其他业务场景需求:
+- 关键词/子序列检索: `LIKE '%XXX%'` / `LIKE '%XXX%YYY%'` 
+   - 关键词回溯场景
+- 最长连续公共子序列检索:
+  - 是否收录类似站点
+    - www.website1.com -> web.website1.com
+    - www.website2.com -> website2.com.cn
+    - ~~blog.website3.com -> www.website3.cn~~
+  - 是否可能见过的实体名
+    - {雕牌肥皂, 丽水雕牌} -> {雕牌}
+    - {丽水雕牌肥皂} -> {雕牌}
+  - 相当于只能首尾插入或删除的编辑距离检索, 可部分利用数据库前缀后缀索引
+  - ref db_search_xxx: 子序列遍历, 数据库前缀/后缀最优匹配
+- 距离检索:
+   - 近似文本查找: `where edit_distance(x, y) < d`
+   - 相似图片判重: `where bit_count(x ^ y) < d`
 
-天真的办法: 额外辅助索引 `idx_bit_count = bit_count(x)`
+距离检索之天真办法: 额外辅助索引 `idx_bit_count = bit_count(x)`
 - `where idx_bit_count between bit_count(y) - d and bit_count(y) + d and bit_count(x^y) < d`, 筛选性太低
 - `where idx_bit_count = bit_count(y)`, 损失太多, 假设一定1位数目相同只是位置不同
 - 常见索引优化策略/天真办法的思路至少是合理的: 长数据找个短标示便于辅助索引, 等值判定后再后过滤, 一定损失换速度
@@ -69,7 +75,7 @@ Python: 短文本 Boyer–Moore–Horspool (BM简化版), 长文本 Two-Way
 
 检索: 针对海量的haystack文本构建有效的索引结构, 从而快速框定小样本目标数据
 
-# 检索
+# 文本搜索
 
 information retrieval / search / full-text search / ...
 
@@ -82,7 +88,7 @@ information retrieval / search / full-text search / ...
 - document / 单个文档
 - corpus / 数据集 / 语料
 
-## 检索诉求
+文本搜索需求
 
 - 子序列匹配: `LIKE '%XXX%'`
 - 逻辑检索 (boolean search): `term1 AND term2 AND NOT term3`
@@ -96,6 +102,7 @@ information retrieval / search / full-text search / ...
   - 实现手段: 近邻匹配, 约束命中词相对距离为0
   - ES: match_phrase + slop=0 
   - 保证了精度1但无法保障召回1, 能否认为等同于子序列匹配?
+    - 不能, 分词可能导致不能全召回
 - 语义检索/知识问答: 基于意图/内容
   - e.g. 广州市长是谁?
 
@@ -112,7 +119,7 @@ bag of words / BoW
   - 丢失序列信息: 美国/比/中国/强 = 中国/比/美国/强
   - 严重依赖于词表选择及分词质量
   - 视作表征向量时是极端高维且稀疏的
-  - 语义近似检索效果不好, 同一个概念上千种表述方式, 无法都通过同义词方式召回回来
+  - 语义近似检索效果不好, 同一个概念多种表述方式, 无法都通过同义词方式召回回来
 
 ## 倒排索引 / inverted index
 
@@ -153,11 +160,25 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-ngram-t
 
 场景: 拼写纠错, 搜索召回, "你是不是要搜索..."
 
-Levenshtein automata
+naive approach
 
-需要基于提前构建好的词表
+- abc距离1索引词: {ab, bc, ac, ab?, a?c, ?bc, abc?, ab?c, a?bc, ?abc}
+- 纳入索引
+- 检索时, 距离1索引词查找
+- 索引时不构建?, 检索时则需枚举所有具体词
 
-## 排序评分
+长度n单词, 字表k
+- 距离1 <= n + n*(k-1) + k*(n + 1) = (2k+1)*n+1 
+- 距离2 < (2k+1)*n+1 + ((2k+1)*n+1)**2 
+- 距离m ~ (k*n)**m
+
+[Levenshtein_automaton](https://en.wikipedia.org/wiki/Levenshtein_automaton): 给定词表构建, 找出所有编辑距离m内的有效词.
+
+一般针对给定词典做, 任意文本编辑距离, 先分词拆解处理
+
+> TODO DEMO TIME
+
+## 排序评分 / TF-IDF / BM25
 
 - IDF: inverse document frequency
   - `ft = Nt / N` 出现该词文档比例  
@@ -199,7 +220,7 @@ Levenshtein automata
 - 词袋向量加权IoU
 - 互信息最大化
 
-DEMO TIME
+> DEMO TIME
 
 # 词向量
 
@@ -216,10 +237,10 @@ DEMO TIME
 - 分布式/局部式表示
 - 维度低 ~ 几百
 - 稳健性 / 易扩展
-  - 加个新词时处理办法
+  - 加新词时处理办法
 - 可通过词向量内积更好的表达相似性
 - 缺陷:
-  - 不好解释 / 玄学
+  - 难以解释
 
 词向量的学习, 本质上基于邻近词共现概率的学习 (两词向量内积 ~ 共现概率)
 
@@ -233,7 +254,7 @@ DEMO TIME
 
 ## 主题向量
 
-LSA: 文档TF-IDF矩阵SVD分解 (W=USVt-> 左特征向量 (词主题向量) + 特征值 (主题权重) + 右特征向量 (主题在语料的分布) 
+LSA (latent semantic analysis): 文档TF-IDF矩阵SVD分解 (W=USVt-> 左特征向量 (词主题向量) + 特征值 (主题权重) + 右特征向量 (主题在语料的分布) 
 
 主题 = 认为出现一个词的时候, 在说一个主题的概率较大; 或者反过来说, 一个词被多大的可能纳入描述某个主题的文章中
 - 烤肉 =  0.8 * 做饭 + 0.0 * 宠物 + 0.5 * 露营
@@ -281,16 +302,16 @@ fasttext:
 - 量化手段减少模型大小
 - 训练推断封装, 鼓励直接命令行使用, "外行"都能用
 
-# 哈希 / 特征向量
+# 哈希 / 特征向量 / LSH
 
 > hash: chopped meat mixed with potatoes and browned
 
 哈希: 接受不固定的输入, 输出定长的字节, 以期捕获输入的某种特征
 
 CHF (cryptographic hash function)
-- 输出空间的概率是非常均匀的 / any output comes with prob 2^-n
+- 要求1: 输出空间的概率是非常均匀的 / any output comes with prob 2^-n
   - 满足这一点可可以用来做哈希数据结构, 但是不能用作安全场景的哈希
-- 难以逆向 / one-way properties, 难以碰撞 / given x, finding y such that h(x) == h(y) is hard
+- 要求2: 难以逆向 / one-way properties, 难以碰撞: given x, finding y such that h(x) == h(y) is hard
 - 应用: 签名, 验证, 文件去重, ...
 
 LSH (locality-sensitive hashing)
@@ -300,16 +321,17 @@ LSH (locality-sensitive hashing)
   - d(X1, X2)>r2 时, P(h(X1) == h(X2)) < p2
 - 为什么翻译为局部敏感哈希, 明明是局部变化不敏感哈希?
 
-文本 / SimHash / 主要针对长文本, 解决网页抓取去重问题, 我们业务上更需要针对短文本的编辑距离不敏感的simhash
+文本 / SimHash / 主要针对长文本, 解决网页抓取去重问题
+
+我们业务上更需要针对短文本的编辑距离不敏感的simhash, 短文本编辑距离检索聚类
 
 图像 / perceptual hashing / pHash / 相似图像检索
 
-LSH曲解为机器学习的表征函数
+LSH"曲解"为机器学习的表征函数
 - LSH=特征抽取/表征学习, 拥有相同关心目标特性的输入, 应有相似的特征向量
 - 形式上的特征: 数据增强对抗习得
 - 概念上的特征: 模型训练习得
 - 模型训练: 大量输入习得LSH函数的过程 
-- 模型生成: 从特征向量出发, 稍微扰动一点, 生成一个类似的数据, 如图像生成 / 文本生成
 
 # 距离检索手段
 
@@ -341,25 +363,32 @@ Q: 不同于地图寻路, 如何定位开始检索的节点?
 
 ## 量化手段
 
-向量量化 / 也可以理解为一种LSH
+也可以理解为一种LSH
 
 主要是为了确保量化前后计算的评分(这里严谨点, 不说度量)不发生较大变化, 因此需要先确定评分函数后针对性的量化 
 
-- 暴力裁减/映射: `float32[256] > mean -> bit[256] = 64byte = uint64`
-- 基于单分量数值分布压缩, 如分位数化
-- 矩阵整体做PCA抽特征后降维
+- 二值化, 直接裁减干到1bit: `float32[256] > mean -> bit[256] = 64byte = uint64`
+  - normalize过的参数, 认为mean=0, 均匀分布, 直接二级化
+- 线性量化, 数值拟合: 基于单分量数值分布统计情况做压缩, 计算时需额外引入量化/反量化步骤
+- 向量矩阵整体做PCA抽特征降维
 - 多分量分组聚类, 减少存储开销
 - 减少数据量就是最好的计算优化
 
-不同于模型参数压缩/量化: 模型压缩需要考虑矩阵计算便利性, 以及点乘结果的尽可能少扰动
+对比模型参数压缩/量化: 模型压缩需要考虑矩阵计算便利性, 以及点乘结果的尽可能少扰动
 
 # faiss
 
 https://github.com/facebookresearch/faiss/wiki
 
-NOTE CODE HERE
+> CODE HERE
 
-首先不要瞧不起暴力/线性索引, 通过向量计算, 加mmap减少内存, 小场景还是可以满足诉求的
+首先不要瞧不起暴力/线性索引, 通过指令并行, mmap减少内存, 小场景还是可以满足诉求的, 参考目前搜索词推荐
+
+# milvus
+
+https://milvus.io/docs
+
+底层基于faiss, 类似lucene和elasticsearch, 工具包还是单独数据库的区别
 
 # 向量数据库
 
@@ -372,7 +401,7 @@ https://www.infoq.cn/article/saw52ys9ymut3c2zb9wp
 实现手段:
 
 - 堆硬件, 上集群, 并行/分布计算: 向量度量计算任务非常容易并行, 数据拆分 + 维度拆分 后汇总过滤手段
-- 指令并行, 单机计算上GPU
+- 指令并行, 单机计算上GPU加速计算
 - 数据结构/算法优化/量化近似
 - 常规数据库功能整合
 
