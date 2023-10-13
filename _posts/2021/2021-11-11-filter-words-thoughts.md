@@ -13,7 +13,7 @@ title: filter_word引发的随想
 
 看到项目里的一种实现
 
-```python
+```
 def filter_words_1(ac: set) -> set:
     # ac: [(词结束位置, 词), ...]
     return ac.difference(
@@ -34,13 +34,13 @@ assert filter_words_1({(2, '贝多芬'), (2, '多芬')}) == {(2, '贝多芬')}
 
 好家伙, 先不论`O(N**2)`的复杂度, 从结果来看, 只要重叠的词全都不留, 香消玉损:
 
-```python
+```
 assert filter_words_1({(2, '木林森'), (3, '森马'), (5, '马丁靴')}) == set()
 ```
 
 另外类似需求的实现, `O(NlogN)`的(排序导致的)复杂度, 看上去好像靠谱点.
 
-```python
+```
 def filter_words_2(ac) -> set:
     r = []
     ac = sorted(ac, key=lambda t: (t[0], -len(t[1])))  # 按照结束位置排序, 相同结束位置长的排前面
@@ -66,7 +66,7 @@ assert filter_words_2({(2, "木林森"), (3, "森马"), (5, "马丁靴")}) == {(
 
 好像都不是, 甚至连返回结果的不重叠都没保障. 随便找个反例:
 
-```python
+```
 # 期望: 只有 Mario Badescu
 assert assert filter_words_2({(4, "rio"), (10, "des"), (12, "Mario Badescu")}) == {(4, "rio"), (12, "Mario Badescu")}
 # 期望: 临停, 车位
@@ -77,7 +77,7 @@ assert filter_words_2({(1, '临停'), (3, '车位'), (3, '停车位')}) == {(3, 
 
 离日常更近一点的形式表述: 一天超级多会议邀约, 你得选择参加其中不冲突的会议, 从而
 - 目标1: 参加最多的会议?
-- 目标2: 开会摸鱼的时间最长?
+- 目标2: 开会时间最长?
 - 目标3: 泛化形式, 每个会议都有个收益, 确保一天会开完会的收益最多?
 
 ## 针对目标1的贪心解
@@ -86,7 +86,7 @@ assert filter_words_2({(1, '临停'), (3, '车位'), (3, '停车位')}) == {(3, 
 2. 拒绝所有和该会议冲突的会议
 3. 重复直到没有待确认的会议邀约
 
-```python
+```
 def filter_words_3(ac) -> set:
     r = []
     ac = sorted(ac, key=lambda t: (t[0], -len(t[1])))

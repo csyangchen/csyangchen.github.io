@@ -187,7 +187,11 @@ cannot import name 'Mapping' from 'collections'
 并在3.10里面[正式移除](https://docs.python.org/3/whatsnew/3.10.html#removed).
 这个其实在PY3.3里面就标记淘汰了, 但是以程序员的尿性, 没人关心`DeprecationWarning`.
 
+同理`pkgutil.ImpImporter`, 3.3版本deprecated了, 3.12里面才正式去掉, 导致了一堆问题. 需要等各个依赖跟上. 
+
 因此每次发布, 需要特别关注`#removed`章节, 有责任心的三方库作者需要提前跟进`#deprecated`章节.
+
+一些重要依赖的包, 如pytorch, onnxruntime等, 都是默认不支持相信版本的, 需要等打包显式支持才能用上. 这又拖慢了新版本的纳入节奏.
 
 三方依赖的变更, 又涉及各种恶心的[依赖地狱](https://pip.pypa.io/en/stable/topics/dependency-resolution/)问题, 不展开.
 
@@ -196,3 +200,9 @@ cannot import name 'Mapping' from 'collections'
 依赖管理角度, 为了避免一定要锁到最细粒度, 也要声明所有间接依赖库, 目的一个是避免触发依赖检查回溯, 二是确保每次确定性的构建, 当然最好的情况是自建依赖镜像, 避免三方作者抽疯了.
 
 非必要不要引入太多的依赖, 导致项目的脆弱性. 这点GO就做的不错, 项目没用到的依赖直接就自动删掉了. 目前我没有找到很好的办法确保PY项目最简依赖的办法.
+
+
+# Reference
+
+- https://github.com/microsoft/onnxruntime/issues/14880
+- https://github.com/pypa/pip/issues/11501
