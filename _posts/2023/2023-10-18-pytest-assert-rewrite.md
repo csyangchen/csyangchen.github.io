@@ -73,5 +73,5 @@ assert v0 is v7
 
 # Reference
 
-- https://pytest.org/en/7.4.x/how-to/assert.html#advanced-assertion-introspection
-- https://docs.pytest.org/en/latest/how-to/writing_plugins.html#assertion-rewriting
+- <https://pytest.org/en/7.4.x/how-to/assert.html#advanced-assertion-introspection>
+- <https://docs.pytest.org/en/latest/how-to/writing_plugins.html#assertion-rewriting>
