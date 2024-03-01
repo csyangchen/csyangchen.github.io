@@ -64,6 +64,20 @@ assert v0 is v7
 
 可见常量表达式改写成了变量运算结果, 自然断言失败
 
+为什么`'ab' is 'a' + 'b'? 因为做了常量折叠优化
+
+```
+import dis
+dis.dis(lambda: 'ab' is 'a' + 'b')
+
+  2           0 RESUME                   0
+              2 LOAD_CONST               1 ('ab')
+              4 LOAD_CONST               1 ('ab')
+              6 IS_OP                    0
+              8 RETURN_VALUE
+
+```
+
 如何确保pytest的assert和实际执行一致? `--assert plain`关掉全部assert改写, 或者指定模块文档加`PYTEST_DONT_REWRITE`标记忽略改写.
 
 衍生为什么代码里面 assert 是个糟糕的主意? `__debug__`参数决定了是否执行assert语句.
