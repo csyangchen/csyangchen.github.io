@@ -83,7 +83,7 @@ subword tokenization / 折中办法: 对于词进一步分割以减少词表大�
 GPT词表观察:
 
 - 由于没有对于空格预处理, 很多词会有带空格不带空格的两个token, 如"public" / " public", " Hello world" != "Hello world". 如确保词无空格, 会是怎样的结果?
-- 对于单词的分割和人类理解并不一致, "w|alking t|alking st|alking"
+- 对于单词的分割和人类理解并不一致 `w|alking t|alking st|alking`
 
 ## WordPiece for BERT
 
@@ -225,11 +225,11 @@ tokenization为了压缩, 目的输出最短的; 分词是概率上猜一个可�
 
 # Reference
 
-- https://github.com/huggingface/tokenizers
-- https://github.com/openai/tiktoken
-- https://github.com/google/sentencepiece
-- https://huggingface.co/docs/transformers/tokenizer_summary
-- https://huggingface.co/course/chapter6/1
-- http://www.matrix67.com/blog/archives/5044
-- https://zhuanlan.zhihu.com/p/67475895
-- https://spaces.ac.cn/archives/3913/comment-page-1
+- <https://github.com/huggingface/tokenizers>
+- <https://github.com/openai/tiktoken>
+- <https://github.com/google/sentencepiece>
+- <https://huggingface.co/docs/transformers/tokenizer_summary>
+- <https://huggingface.co/course/chapter6/1>
+- <http://www.matrix67.com/blog/archives/5044>
+- <https://zhuanlan.zhihu.com/p/67475895>
+- <https://spaces.ac.cn/archives/3913/comment-page-1>
