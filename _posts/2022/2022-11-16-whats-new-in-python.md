@@ -1,5 +1,5 @@
 ---
-title: Python版本更新历程 
+title: Python版本更新历程
 ---
 
 目前涉及项目从PY2, PY3.5到3.10一路升上来. 记录备忘下各版本有用到的新特性.
@@ -18,7 +18,7 @@ PY2TO3是个非常痛苦的过程, 目前业务上还有PY2的后台服务, 不�
 及[协程机制](https://peps.python.org/pep-0492/) (coroutine / async / await),
 此后每个版本, 都有非常大篇幅持续完善这两个方面.
 
-当时业务很多历史PY2服务迁移目标确定为3.5, 方便顺便加上最基本的类型注解. 
+当时业务很多历史PY2服务迁移目标确定为3.5, 方便顺便加上最基本的类型注解.
 不过类型注解主要是文档作用, 没有执行期间的检查机制, 主要靠各大IDE集成提示警告. 需要调研下相关类型检查的工具.
 
 # [3.6](https://docs.python.org/3/whatsnew/3.6.html)
@@ -51,7 +51,7 @@ PY字典保障写入顺序遍历, 从语言层面得到了保障.
 
 - `PYTHONPROFILEIMPORTTIME / -X importtime` 用来开脚本启动到底哪些模块耗时比较久, 用来方便抓出哪些模块在加载阶段做很重的逻辑
 - `PYTHONUTF8=1 / -X utf8=0` 强制默认编码为UTF8, windows环境开发者的福音, 再也不用烦恼 `UnicodeDecodeError: 'gbk' codec can't decode` 的错误
-- `PYTHONDEVMODE / -X dev` 开启一些额外的检查, 主要是输出一些额外的警告信息, 严肃的开发者还是需要关注这些警告 
+- `PYTHONDEVMODE / -X dev` 开启一些额外的检查, 主要是输出一些额外的警告信息, 严肃的开发者还是需要关注这些警告
 
 # [3.8](https://docs.python.org/3/whatsnew/3.8.html)
 
@@ -102,7 +102,7 @@ f-str可以直接基于变量名显示, `f"{duration=}` VS `f"duration={duration
 # [3.10](https://docs.python.org/3/whatsnew/3.10.html)
 
 [匹配语法](https://peps.python.org/pep-0636/)是个非常有用的特性, 它不仅仅是`case ... when`语法糖, 可以做模式匹配编程, 声明式的表达, 个人经验非常适合写业务逻辑, 可以让表达足够简洁有力.
-把复杂的业务判断逻辑做精简, 平铺直叙, 不用头疼在现在多层`elif`嵌套里面. 
+把复杂的业务判断逻辑做精简, 平铺直叙, 不用头疼在现在多层`elif`嵌套里面.
 
 类型注解支持默认的union简化表达 `x: str | bytes` VS `x: typing.Union[str, bytes]`,
 不过业务上尽量避免多类型参数/结果, 尽量往静态类型语言上去靠.
@@ -187,7 +187,7 @@ cannot import name 'Mapping' from 'collections'
 并在3.10里面[正式移除](https://docs.python.org/3/whatsnew/3.10.html#removed).
 这个其实在PY3.3里面就标记淘汰了, 但是以程序员的尿性, 没人关心`DeprecationWarning`.
 
-同理`pkgutil.ImpImporter`, 3.3版本deprecated了, 3.12里面才正式去掉, 导致了一堆问题. 需要等各个依赖跟上. 
+同理`pkgutil.ImpImporter`, 3.3版本deprecated了, 3.12里面才正式去掉, 导致了一堆问题. 需要等各个依赖跟上.
 
 因此每次发布, 需要特别关注`#removed`章节, 有责任心的三方库作者需要提前跟进`#deprecated`章节.
 

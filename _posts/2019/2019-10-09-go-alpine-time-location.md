@@ -21,7 +21,7 @@ Clickhouse由于业务需要设置了时区为Asia/Shanghai, 正常go程序能�
         runtime.GOROOT() + "/lib/time/zoneinfo.zip",
     }
 
-alpine 镜像为了优化体积, 没有对应路径文件, 因此报错. 
+alpine 镜像为了优化体积, 没有对应路径文件, 因此报错.
 golang:1.13-alpine 之所以正常, 是因为会利用到最后一个go自带的时区文件.
 
 解决办法: 拷贝文件, 并通过`ZONEINFO`环境变量来指定拷贝路径.
@@ -30,23 +30,23 @@ golang:1.13-alpine 之所以正常, 是因为会利用到最后一个go自带的
 
     $ cat tz.go
     package main
-    
+   
     import (
         "fmt"
         "time"
     )
-    
+   
     func main() {
         _, err := time.LoadLocation("Asia/Shanghai")
-        fmt.Println(err)    
+        fmt.Println(err)   
     }
-    
+   
     $ cat Dockerfile
     FROM golang:1.13-alpine
     ADD tz.go .
     RUN go build -o /opt/tz tz.go
     RUN /opt/tz
-    
+   
     FROM alpine
     COPY --from=0 /opt/tz /opt/tz
     COPY --from=0 /usr/local/go/lib/time/zoneinfo.zip /opt/zoneinfo.zip

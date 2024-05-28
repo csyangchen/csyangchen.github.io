@@ -18,7 +18,7 @@ title: 检索技术及向量数据库
 - 数据分区, 减少单词查找索引所需深度: `partition by name[:2]`
 
 其他业务场景需求:
-- 关键词/子序列检索: `LIKE '%XXX%'` / `LIKE '%XXX%YYY%'` 
+- 关键词/子序列检索: `LIKE '%XXX%'` / `LIKE '%XXX%YYY%'`
    - 关键词回溯场景
 - 最长连续公共子序列检索:
   - 是否收录类似站点
@@ -81,7 +81,7 @@ information retrieval / search / full-text search / ...
 
 备忘
 - characters / 字母 / alphabet
-- term / 词元 / 单词 / word / token 
+- term / 词元 / 单词 / word / token
   - vocabulary / dictionary / lexicon / 词典 / 词表
 - phrase / 短语
 - sentence / 句子
@@ -100,7 +100,7 @@ information retrieval / search / full-text search / ...
   - 文本查重: 理解为更长文本的编辑距离检索, 以及更复杂的编辑动作, 如整段句子位置对调等.
 - "精准"匹配 (phrase search)
   - 实现手段: 近邻匹配, 约束命中词相对距离为0
-  - ES: match_phrase + slop=0 
+  - ES: match_phrase + slop=0
   - 保证了精度1但无法保障召回1, 能否认为等同于子序列匹配?
     - 不能, 分词可能导致不能全召回
 - 语义检索/知识问答: 基于意图/内容
@@ -168,8 +168,8 @@ naive approach
 - 索引时不构建?, 检索时则需枚举所有具体词
 
 长度n单词, 字表k
-- 距离1 <= n + n*(k-1) + k*(n + 1) = (2k+1)*n+1 
-- 距离2 < (2k+1)*n+1 + ((2k+1)*n+1)**2 
+- 距离1 <= n + n*(k-1) + k*(n + 1) = (2k+1)*n+1
+- 距离2 < (2k+1)*n+1 + ((2k+1)*n+1)**2
 - 距离m ~ (k*n)**m
 
 [Levenshtein_automaton](https://en.wikipedia.org/wiki/Levenshtein_automaton): 给定词表构建, 找出所有编辑距离m内的有效词.
@@ -181,20 +181,20 @@ naive approach
 ## 排序评分 / TF-IDF / BM25
 
 - IDF: inverse document frequency
-  - `ft = Nt / N` 出现该词文档比例  
-  - `- log(ft)` 词的全局的稀有度 
+  - `ft = Nt / N` 出现该词文档比例 
+  - `- log(ft)` 词的全局的稀有度
   - IDF向量: 词对于文档的统计分布
   - IDF thresholding -> 停用词过滤
   - `sum_t(-log(ft)*ft)` 语料熵? / 词表停用词选择, 最小熵减
 - TF: term frequency
-  - `Ntd` 
+  - `Ntd`
   - 未正则化的 = 频数
   - 观察: 文本复制一遍不应该导致更相关
     - 措施: 频数改为频率, `ftd = Ntd / len(D)`
   - 观察: 一个文档反复堆砌一个词时不应该有线性的评分提升
     - 措施: 非线性化手段, 如 `log(ftd)`, `Ntd / (Ntd + k)`, ...
     - 传统TF-IDF评分 = `sum_t(log(ftd)*log(ft))`
-    - 后者更可取, 因为更加平滑, 且上限趋向1 
+    - 后者更可取, 因为更加平滑, 且上限趋向1
   - 观察: 都命中条件下, 优先考虑更短的文本, 认为指代更明显
     - 措施: 除以文本长度
     - `len(D) / avg(len(d))` 相对文本长度越大, 权重越低
@@ -205,6 +205,17 @@ naive approach
 语言模型视角解读 / The query likelihood model
 
 其他的排序规则混合: 文档的属性, 如重要性, PageRank指标, ...
+
+## ES分词插件
+
+IK分词器: https://github.com/medcl/elasticsearch-analysis-ik
+
+- ik_max_word 各种分词组合来一遍
+- ik_smart 基于词典的分割
+
+官方插件: https://www.elastic.co/guide/en/elasticsearch/plugins/current/analysis-smartcn.html
+
+搜索质量严重依赖于分词及相似度计算指标, 很多搜不出来, 可惜现在没有例行评估优化
 
 ## 向量计算视角的全文检索
 
@@ -254,7 +265,7 @@ naive approach
 
 ## 主题向量
 
-LSA (latent semantic analysis): 文档TF-IDF矩阵SVD分解 (W=USVt-> 左特征向量 (词主题向量) + 特征值 (主题权重) + 右特征向量 (主题在语料的分布) 
+LSA (latent semantic analysis): 文档TF-IDF矩阵SVD分解 (W=USVt-> 左特征向量 (词主题向量) + 特征值 (主题权重) + 右特征向量 (主题在语料的分布)
 
 主题 = 认为出现一个词的时候, 在说一个主题的概率较大; 或者反过来说, 一个词被多大的可能纳入描述某个主题的文章中
 - 烤肉 =  0.8 * 做饭 + 0.0 * 宠物 + 0.5 * 露营
@@ -268,7 +279,7 @@ LSA矩阵维度: 词表 x 主题
 
 - 主题向量, 维度等于隐式习得的主题数(也可能截断掉), 词包模型发展出来, 全局概念, 文档分类
   - 学习快 (传统矩阵分解算法)
-- 词向量, 维度预先假定下来, 上下文习得, 捕获局部信息; 
+- 词向量, 维度预先假定下来, 上下文习得, 捕获局部信息;
   - 学习慢 (一层神经网络)
   - 一种朴素的基于词向量的文档向量 = 词向量加和; 也可类似LSA一样, 分解降维, 做聚类
   - 更加适合短语/句子层面做文档分析 (参考相似文案/商品标题推荐业务功能)
@@ -295,7 +306,7 @@ LSA矩阵维度: 词表 x 主题
 
 gensim.models.LsiModel / gensim.word2vec
 
-fasttext: 
+fasttext:
 - 加速训练手段
   - hierarchical softmax
   - n-gram 忽略顺序
@@ -331,7 +342,7 @@ LSH"曲解"为机器学习的表征函数
 - LSH=特征抽取/表征学习, 拥有相同关心目标特性的输入, 应有相似的特征向量
 - 形式上的特征: 数据增强对抗习得
 - 概念上的特征: 模型训练习得
-- 模型训练: 大量输入习得LSH函数的过程 
+- 模型训练: 大量输入习得LSH函数的过程
 
 # 距离检索手段
 
@@ -365,7 +376,7 @@ Q: 不同于地图寻路, 如何定位开始检索的节点?
 
 也可以理解为一种LSH
 
-主要是为了确保量化前后计算的评分(这里严谨点, 不说度量)不发生较大变化, 因此需要先确定评分函数后针对性的量化 
+主要是为了确保量化前后计算的评分(这里严谨点, 不说度量)不发生较大变化, 因此需要先确定评分函数后针对性的量化
 
 - 二值化, 直接裁减干到1bit: `float32[256] > mean -> bit[256] = 64byte = uint64`
   - normalize过的参数, 认为mean=0, 均匀分布, 直接二级化
@@ -406,3 +417,8 @@ https://www.infoq.cn/article/saw52ys9ymut3c2zb9wp
 - 常规数据库功能整合
 
 ES/PostgreSQL+插件, 你也可以说它是向量数据库
+
+
+# Reference
+
+- https://nlp.stanford.edu/IR-book/information-retrieval.html

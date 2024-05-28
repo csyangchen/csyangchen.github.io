@@ -86,7 +86,7 @@ def test_func():
     ...
 ```
 
-原则: 
+原则:
 
 - 最细粒度mock
 - 模块边界mock, 避免mock具体内部实现逻辑
@@ -161,7 +161,7 @@ if XXX:
 @pytest.mark.xfail(...)
 ```
 
-避免使用unittest, 尽量使用pytest理由: 
+避免使用unittest, 尽量使用pytest理由:
 - 类继承把代码做复杂了. pytest对于代码倾入性较少.
 - **不**建议面向对象编程.
 - 对应的pytest方法都能满足需求.
@@ -199,7 +199,7 @@ ref: [.coveragerc](https://coverage.readthedocs.io/en/v4.5.x/config.html]
 
 良好测试代码的评价标准: 修改代码行数 / 需要修改的测试代码行数
 - 过低: 很多逻辑没有充分测试覆盖到
-- 过高: 
+- 过高:
   - 修改导致既有测试用例失败, 新功能引入的回归性不好, 或者说功能设计没有考虑到向未来兼容
   - 过于脆弱, 不鲁棒, 测试用例偏向面向实现细节测试, 没有针对长期较为稳定的模式/边界测试
 
@@ -224,7 +224,7 @@ ref: [.coveragerc](https://coverage.readthedocs.io/en/v4.5.x/config.html]
   - mock时间相关
 - **S**elf-Validating
   - 测试一定要做断言, 不是跑完人工看输出是否符合预期
-- **T**imely: 
+- **T**imely:
   - 测试先于具体开发
 
 # 相关思潮
@@ -236,21 +236,21 @@ ref: [.coveragerc](https://coverage.readthedocs.io/en/v4.5.x/config.html]
     - 极限: 代码修改触发自动相关测试重跑
   - **先写测试**, 而不是功能完成后补测试
   - 红绿灯迭代意识
-- **TDT / DDT**: Table Driven Test / Data Driven Test 
+- **TDT / DDT**: Table Driven Test / Data Driven Test
   - 数据驱动测试, 识别输入/输出模式, 避免写测试代码
 - **SBE**: [Specification By Example](https://en.wikipedia.org/wiki/Specification_by_example)
   - 避免写文档, 写通俗易懂的, 可执行验证的测试例子, 快速上手使用
 - **BDD** (DDD)
   - GWT (Given / When / Then)
-  - 数据任务GWT: 
+  - 数据任务GWT:
     - SQL就是数据任务最简洁的领域语言
     - SQL查询结果断言语法
 - ATDD / STDD / ...
 
 更多测试名词轰炸:
-- Unit Testing 
+- Unit Testing
 - Smoke Testing
-- Integration Testing 
+- Integration Testing
 - Regression Testing
 - Acceptance Testing
 - 区别: 测试的范畴

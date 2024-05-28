@@ -4,7 +4,7 @@ title: Python并发网络编程
 
 为什么要并发? 在等待中多做点有用的事情, 在不确定的世界中填满空虚的内心
 
-业务场景: 
+业务场景:
 - 爬虫系统 (抓取外部网站)
 - WEB后端 (数据库查询代理)
 
@@ -22,7 +22,7 @@ title: Python并发网络编程
 - 优点:
   - 充分隔离
   - 方便外部单独管理启停 (至少有个PID)
-  - 编程心智负担相对简单 
+  - 编程心智负担相对简单
 - 缺点:
   - 系统调度开销太大 / 内存资源
   - 数据同步需要通过MMAP等相对较重的机制
@@ -49,7 +49,7 @@ socket编程
 - fork process or thread on new request / 一般系统编程/网络编程教学用例
 - pooling, 进程/线程池, 减少创建销毁调度开销, 复用
   - 1 master + n worker 模式
-  - master 管理 worker 
+  - master 管理 worker
   - worker 处理实际请求, 可能是master转交, 或者通过SO_REUSEPORT机制让操作系统分发
   - 每个worker可进一步做事件驱动逻辑, 多worker主要是为了跑多核实现并行
 
@@ -57,10 +57,10 @@ IO模型
 - 同步/非同步 (synchronous / asynchronous)
   - 多线程编程模式: listen一个线程生成socket, worker线程池认领socket处理直到关闭
   - 单线程下的多路复用机制 (multiplexing)
-    - select (FD_SETSIZE大小限制了上限) / poll 
+    - select (FD_SETSIZE大小限制了上限) / poll
     - [epoll](https://man7.org/linux/man-pages/man7/epoll.7.html)
 - 阻塞/非阻塞 (blocking / non-blocking)
-  - ref call / cast 语义区别 
+  - ref call / cast 语义区别
   - 针对单个任务的IO而言的
   - [aio](https://man7.org/linux/man-pages/man7/aio.7.html)
 
@@ -84,7 +84,7 @@ IO模型
 - 抢占式式调度 (preemptive): 一个任务随时可被中止, 例如操作系统调度, 进程/线程可以被随时挂起
 - 协作式调度 (cooperative): 如果一个任务自己不放手, 或者给出机会, 则可以一直执行下去
 
-一些实现的协程, 如果没有遇到IO调度点, 可以永远霸占执行, 因此一些死循环会导致无法调度. 
+一些实现的协程, 如果没有遇到IO调度点, 可以永远霸占执行, 因此一些死循环会导致无法调度.
 Goroutine 是部分抢占式的, safe-point才可被抢占, 还是可以做到单Goroutine拖垮整个程序.
 
 https://go.dev/src/runtime/preempt.go
@@ -169,7 +169,7 @@ HTTP -> Web Server -> WSGI server (with app code)
 
 ref Servlet
 
-采集场景打满带宽, 提高资源利用率, 外部目标站点的请求耗时波动非常大 (不可控的网路, 目标服务器处理速度, 触发限流等等); 
+采集场景打满带宽, 提高资源利用率, 外部目标站点的请求耗时波动非常大 (不可控的网路, 目标服务器处理速度, 触发限流等等);
 WEB场景, 不涉及外部API调用的情况下, 主要是数据库/缓存读写, IO相对可控, 主要不是抗请求并发 (多起来数据库也受不了了), 再宽的高速堵点车也难受,
 主要还是解决单个慢查询不要影响其他的短请求, 类似堵车后有个快速分流的支路.
 

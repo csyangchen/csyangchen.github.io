@@ -56,7 +56,7 @@ IoU metric: bbox
   - 0 <= IoU <= 1
   - IoU = 0: 框不相交
 - [GIoU](https://giou.stanford.edu/) = IoU - (闭包面积 - 联合面积) / 闭包面积
-  - 考虑了不相交情况下的远近 
+  - 考虑了不相交情况下的远近
   - -1 < GIoU <= 1
   - GIoU <=0: 框不相交, 距离越远值越小
 
@@ -71,19 +71,19 @@ IoU metric: bbox
 # 方法
 
 - two-stage detector / 两阶段: 先预测框再对框分类
-    - 2014 RCNN 
+    - 2014 RCNN
     - 2015 SPP
-    - 2015 Fast RCNN 
+    - 2015 Fast RCNN
     - 2015 Faster RCNN
     - 2017 FPN
-    - 2017 Mask RCNN 
+    - 2017 Mask RCNN
 - one-stage detector / 一阶段: 直接预测框及分类
   - 2016 YOLO
   - 2016 SSD
-  - 2017 RetinaNet & Focal Loss 
+  - 2017 RetinaNet & Focal Loss
   - 2018 YOLOv3
   - 2020 DETR
-  - 2021 Deformable DETR 
+  - 2021 Deformable DETR
   - 2022 YOLOv7
 
 # Region CNN (RCNN)

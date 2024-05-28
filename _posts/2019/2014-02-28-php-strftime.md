@@ -15,7 +15,7 @@ PHP strftime本质上是对`time.h`的`strftime`的封装:
 - C定义: `size_t strftime(char *s, size_t max, const char *format, const struct tm *tm);`
 
 看一下代码实现:
- 
+
     // ...
     int                  max_reallocs = 5;
     size_t               buf_len = 256, real_len;

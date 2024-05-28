@@ -7,14 +7,14 @@ title: RPC 调研
 
 广义来说当然也算是RPC, 不过现在"RPC"貌似都是特指使用二进制协议的轮子
 
-优点: 
+优点:
 
 - 简单, 可以用 curl / 浏览器等工具调试
 - 生态圈丰富
 - 和后台开发可以复用一套API接口 (例如网盟中间层和网盟后台, 广告查询接口)
 - 广泛可选的基于HTTP的基础组件服务, 如Caching, Load Balance, ...
 
-缺点: 
+缺点:
 
 - HTTP 请求的 Header 字段 overhead 较高, 请求参数解析开销较高, JSON 格式序列化开销很高; 因此在某些追求性能的场合, 使用二进制的协议更加高效
 
@@ -35,7 +35,7 @@ title: RPC 调研
 
 # [Redis Protocol](https://redis.io/topics/protocol)
 
-了解到公司内部也在使用, 好处是通讯协议异常简单, 也是基于文本的协议. 
+了解到公司内部也在使用, 好处是通讯协议异常简单, 也是基于文本的协议.
 
 - 可以使用nc, redis-cli等工具调试
 - 可以很好的复用已有的 Client library
@@ -46,7 +46,7 @@ title: RPC 调研
 
 源于Google的内部RPC框架, 使用protobuf进行编码解码.
 
-优点: 
+优点:
 
 - 使用 Protocol Buffer 序列化高效, 生成数据小
   - 比 Thrift 强
@@ -87,7 +87,7 @@ title: RPC 调研
 
 优点: 预编译是一个可选项, 一个JSON描述的数据结构. 更加适合动态语言.
 
-缺点: 
+缺点:
 
 - 由于每次通讯需要预先沟通格式, 作为RPC来说overhead太高, 还是适合以自解释的数据文件存储方式
 - Go / PHP 不在官方优先支持之列
@@ -101,7 +101,7 @@ title: RPC 调研
 
 - 同时支持 HTTP+JSON 和 Thrift, 易用性/性能得兼
 
-缺点: 
+缺点:
 
 - 非主流
 - 目前不支持PHP

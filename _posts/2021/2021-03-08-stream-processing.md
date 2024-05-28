@@ -2,7 +2,7 @@
 title: 流计算调研
 ---
 
-数据处理之5V: Volume / Velocity / Variety / Veracity / Value 
+数据处理之5V: Volume / Velocity / Variety / Veracity / Value
 
 对比：批处理 / Batch Processing
 
@@ -55,7 +55,7 @@ Latency vs Throughput vs Correctness 权衡
 
 - 源 / Source / Spout / Producer / 上游 / 入 / ingress / ... 从哪儿来?
 - 渊 / Sink / Bolt / Consumer / 下游 / 出 / egress / ... 到哪儿去?
-  - 同时产生新的流 / 换乘站 
+  - 同时产生新的流 / 换乘站
   - 不产生新的流 / 终点站
 - 算子: 具体业务逻辑实现
 - 任务拓扑 / Job Topology / DAG
@@ -137,7 +137,7 @@ State Snapshot / 状态快照
 - Kafka: 可重放/顺序消费保障
   - 解耦/读写优化/扩容/数据演化友好/容错/...
   - Kappa架构 (κ): Kafka as database
-  - Kafka Streams / KSQL / Samza / ... 完全基于Kafka的流计算  
+  - Kafka Streams / KSQL / Samza / ... 完全基于Kafka的流计算 
 - Spark -> Spark Streaming (strong consistency, micro-batch, event-time window)
   - micro-batching 本质面向一批消息计算的
   - 单消息处理模型 vs 微批量: 实时性, 一批数据的消费事务问题

@@ -2,7 +2,7 @@
 title: 强化学习
 ---
 
-[强化学习](https://book.douban.com/subject/34809689/) 阅读笔记
+[强化学习](https://book.douban.com/subject/34809689/) by [Rich Sutton](http://incompleteideas.net/)
 
 # RL
 
@@ -12,14 +12,14 @@ title: 强化学习
 
 四要素
 - policy: sensation -> action, 行动策略
-- reword signal: 奖惩信号 (短期,及时行乐) / 容易测量 
+- reword signal: 奖惩信号 (短期,及时行乐) / 量化, 容易测量
 - value function: 价值函数 (长期,延迟满足) / 难以评估, 基于reward测算
 - model / dynamics: 运作机制, 不一定已知
 
 与监督学习区别:
 监督学习, 通过对于训练集归纳, 预测未见数据.
 相当于给了每种棋局的最优解法, 但是缺少学习体和机制的交互过程.
-实际问题可用于训练的标注数据很少, 需要学习体不断实践拿反馈, 生成训练数据, 自学成才.
+实际问题标注数据量很少, 质量也堪忧, 需要学习体不断实践拿反馈, 生成训练数据, 自学成才.
 
 与无监督学习区别: RL的目标是最大化奖赏, 无监督学习旨在发现背后的结构. 当然理解世界运作机制有助于最大化奖赏, 不过这是个更难的问题.
 
@@ -47,7 +47,7 @@ bandit: 强盗, 赌博等于抢钱
   - 解耦奖励数值和选择概率
   - 类SGD的方式更新偏好数值
 
-单臂赌博机? one-armed bandit 单摇杆的赌博机, 只要玩下去, 没有选择的机会, 这里多臂还是多台机器没有区别, 主要是为了引入选择性. 
+单臂赌博机? one-armed bandit 单摇杆的赌博机, 只要玩下去, 没有选择的机会, 这里多臂还是多台机器没有区别, 主要是为了引入选择性.
 这里每个赌博机的奖励分布函数未知. 知道了, 相当于开了上帝视角, 拿着期望最大的使劲薅即可.
 
 上面讨论只考虑了奖励函数是固定的 (stationary).
@@ -73,10 +73,10 @@ Gittins-index
 比如和对象一起交往, 当前没做好, 可能连带起历史恩怨翻旧账, 直接火力全开吵起来.
 
 MDP定义
-- S / state / 状态 / sensation / 感知
-- A / action / 行为
-- R / reward / 奖励, 数值
-- d / dynamics / model / 环境运作机制 / `P(St, Rt | St-1, At-1)`
+- **S** / state / 状态 / sensation / 感知
+- **A** / action / 行为
+- **R** / reward / 奖励, 数值
+- **d** / dynamics / model / 环境运作机制 / `P(St, Rt | St-1, At-1)`
   - 状态转移概率 `P(St|St-1,At-1)`
   - 奖励概率 `P(Rt|St-1,At-1)`
   - 条件奖励概率 `P(Rt|St,St-1,At-1)`
@@ -84,7 +84,7 @@ MDP定义
   - `d(s1,s2,a,r) -> [0,1] for s1 in S for s2 in S for a in A for r in R`
   - 对比HMM: 显变量(奖励)完全基于隐变量(当前状态)表达, `p(s1,s2,a,r) = p(s1,s2,a) * p(s2,r)`
   - 对于学习体而言, d不一定是可知的, 但是S一定是可观测的, 或者换个说法, S是学习体的观测/感知, 而不是实际世界运作的底层变量
-- p / policy / 行动策略 / `P(At|St)`
+- **p** / policy / 行动策略 / `P(At|St)`
   - `p(a,s) -> [0,1] for a in A for s in S`
   - 同样的, 也可以确定的策略
 
@@ -92,7 +92,7 @@ MDP定义
 
 MAB例子: 每个机子带了状态, 决定了当前奖励概率
 
-下棋例子: S完全确定的, R是否获胜, A落子, d=对手决策 
+下棋例子: S完全确定的, R是否获胜, A落子, d=对手决策
 
 R很难制订, 和目标相关
 - 最速通关: 每一步激励-1
@@ -111,7 +111,7 @@ R只告诉目标, 不透露方法: 例如下棋, 不能以吃子/损子作为R, 
 
 ```
 G(t) = R(t+1) + l * G(t+1)
-G(t) = sum(l**(i-t) * R(i) for i in t+1 ... T) 
+G(t) = sum(l**(i-t) * R(i) for i in t+1 ... T)
 ```
 
 > 陶渊明 / 归去来兮辞: 悟已往之不谏, 知来者之可追.
@@ -121,9 +121,9 @@ G(t) = sum(l**(i-t) * R(i) for i in t+1 ... T)
 > 二仙桥大爷: 向前看
 
 - state value function / 状态价值函数 / `v(s,p)`: 在给定当前状态s以及选择策略x下, 最终期望收益.
-- action value function / 行动价值函数 / `q(s,a,p)`: 在当前状态s以及策略p下, 采取行动a的期望收益. 
+- action value function / 行动价值函数 / `q(s,a,p)`: 在当前状态s以及策略p下, 采取行动a的期望收益.
 
-Bellman方程: 当前价值函数和下一步价值函数的关系
+**Bellman方程**: 当前价值函数和下一步价值函数的关系
 
 ```
 v(s,p) = sum(p(a,s) * q(s,a,p) for a in A)
@@ -174,8 +174,8 @@ q(s,a) = sum(d(s,s2,a,r)*(r+l*v(s2)) for s2 in S for r in R)
 条件: d已知, 以及d和p是确定性的
 
 迭代步骤 (GPI / generalized policy iteration)
-1. 策略评估 / policy evaluation: 给定策略p, 评估v 
-2. 策略更新 / policy improvement: 基于评估v, 更新p 
+1. 策略评估 / policy evaluation: 给定策略p, 评估v
+2. 策略更新 / policy improvement: 基于评估v, 更新p
 
 有点类似啥?
 - DNN Backpropagation, 前向(计算损失)后向(梯度更新参数)
@@ -188,7 +188,7 @@ q(s,a) = sum(d(s,s2,a,r)*(r+l*v(s2)) for s2 in S for r in R)
 policy evaluation
 ```
 def get_v(p):
-  v = {s: rand() for s in S}  // 价值函数随机初始化 
+  v = {s: rand() for s in S}  // 价值函数随机初始化
   while True:
     e = 0  // 当前迭代步数值变化上界, 理解为v的F范数距离即可
     for s in S:
@@ -201,7 +201,7 @@ def get_v(p):
 
 找更优策略: `p2 >= p1 iff all(v(s,p2) >= v(s,p1) for s in S)`
 
-等价于: `p2 >= p1 iff all(q(s,p2(s),p1) >= v(s,p1) for s in S)` 
+等价于: `p2 >= p1 iff all(q(s,p2(s),p1) >= v(s,p1) for s in S)`
 
 greedy policy / 贪心更新策略: `p2(s) = argmax(q(s,a,p1) for a in A)`
 即只调整当前一步, 找当前最优的选项
@@ -228,7 +228,7 @@ def get_best_p():
 value iteration
 ```
 def get_max_v(p):
-  v = {s: rand() for s in S} 
+  v = {s: rand() for s in S}
   while True:
     e = 0
     for s in S:
@@ -245,7 +245,7 @@ DP缺点: 每一轮遍历状态空间费时 `for s in S`
 
 DP算法针对问题大小是多项式时间复杂度的`O(|S|*|A|)`, 尽管策略空间是`|S|**|A|`
 
-这里DP是针对MDP问题形式的讨论, 广义算法上常提的DP, 即动态规划, 对于问题的要求: 
+这里DP是针对MDP问题形式的讨论, 广义算法上常提的DP, 即动态规划, 对于问题的要求:
 - optimal structure: 父问题最优解是子问题最优解的组合, 否则不能保证收敛到最优解, 只能叫贪心解
   - 正例: 最短路径问题/A*算法, 最大共现概率/viterbi算法, 编辑距离计算, 等
   - 反例: 背包问题
@@ -272,7 +272,7 @@ DP里面要求d已知, 且实际计算困难.
 4. 每次都是整体跑完一轮, 对问题的马尔科夫性不敏感
 
 EE in MC: 策略的随机性.
-如果p是确定的, 则对于q(s,a,p)的估计缺少很多(s,a)的结果. 
+如果p是确定的, 则对于q(s,a,p)的估计缺少很多(s,a)的结果.
 一种办法, 先乱走一步, 再遵循既定的策略 (Exploring Starts).
 
 ```
@@ -282,7 +282,7 @@ q = {(s,a): 0 for s in S for a in A}  // 行动价值函数
 def p(s): // 当前策略函数
   return argmax(q[s,a]) for a in A)
 
-while True:  
+while True: 
   s = random.choice(S)  // 随机开局
   a = random.choice(A)  // 乱走一步
   ss, as, rs = simulate(s,a,p)  // 模拟一局, 得到每一步的状态/决策/奖励列表
@@ -336,3 +336,30 @@ game theory
 - https://arxiv.org/abs/2310.19387
 
 国际象棋/围棋并没有被解决, 只是电脑的策略胜过了人类
+
+
+# MTCS / Monte Carlo Tree Search
+
+蒙特卡洛树搜索
+
+
+# Reward Model
+
+奖励模型 (ChatGPT)
+
+看强化学习的初始由头
+
+TODO
+
+# AlphaGo & AlphaZero
+
+蒙特卡洛树搜索+深度神经网络
+
+AlphaZero: 完全自学习, 不利用人类棋谱知识
+
+
+
+
+# Reference
+
+[苦涩的教训](http://www.incompleteideas.net/IncIdeas/BitterLesson.html)

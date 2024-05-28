@@ -1,8 +1,8 @@
 ---
-title: Python assert 行为不一致原因分析 
+title: Python assert 行为不一致原因分析
 ---
 
-最近做一些测试, 由于习惯性pytest跑代码, 得到了非预期的结果. 表现如下 
+最近做一些测试, 由于习惯性pytest跑代码, 得到了非预期的结果. 表现如下
 
 ```
 > cat a.py

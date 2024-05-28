@@ -45,7 +45,7 @@ MySQL 5.7 增加了对于json类型支持. 因此一些简单的字段提取, �
 
 另外一点使用json格式的好处是, 保证了数据结构的正确性 (至少是有效的json).
 
-从json字段存储实现上来说, json字段存储类似于 varbinary / vartext, 不是 blob / text. 
+从json字段存储实现上来说, json字段存储类似于 varbinary / vartext, 不是 blob / text.
 不是单独空间存储 ???
 
 既然以json格存储, 就不要太指望指定字段筛选的效率了, 一定是扫表.
@@ -81,21 +81,21 @@ virtual修饰符是默认的, 标识不产生实际存储, 只是在查询的时
 
 # stored generated column as primary key
 
-generated 字段, 默认是 virtual 不能作为主键, 只能用作索引; stored 可以做主键. 
+generated 字段, 默认是 virtual 不能作为主键, 只能用作索引; stored 可以做主键.
 我们可以通过这种办法再去掉id字段:
-    
+   
         id int generated always as (payload->>'$.id') stored not null,
 
 # partitioning
 
 一种简单办法是对id进行hash分区
-        
+       
         create table ads (
             id int generated always as (payload->>'$.id') stored not null,
             dt int generated always as (id % 10) not null,
             payload json not null
         ) partition by hash(id) partitions 32;
-        
+       
 如果id和创建时间相关, 并且需要定期淘汰, 则可以做范围分区 (RANGE PARTITION).
 
 结合到业务, 我们广告分不同类型, 不同类型的数量级差别很大, 且业务上相对独立. 一个自然的想法就是按照广告类型进行分区.

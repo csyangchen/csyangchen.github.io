@@ -6,7 +6,7 @@ Clean: attention to details
 
 精益生产 ~ TPM (Total Product Maintenance) / "5S" Rule / Lean / Craftsmanship (匠人心态)
 
-代码泥潭, 破窗效应, "童子军"法则: 
+代码泥潭, 破窗效应, "童子军"法则:
 
 > Leave the campground cleaner than you found it.
 
@@ -21,7 +21,7 @@ Ch2 命名
 
 命名详细程度 ~ 作用域范围
 
-命名一致性: 避免别名. 
+命名一致性: 避免别名.
 
 *不光代码, 数据库, 协议等都要一致. 中文环境, 需要明确的名词对照表?*
 

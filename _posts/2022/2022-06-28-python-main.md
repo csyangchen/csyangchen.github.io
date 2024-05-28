@@ -31,7 +31,7 @@ Java世界的做法就是开各种`public void static main`入口, 然后包一�
 
 [Celery](https://docs.celeryq.dev/en/stable/getting-started/first-steps-with-celery.html#application)自己维护了一个入口App, 注入相关任务函数, 并支持命令行直接执行
 
-也有很多代码 [fire](https://github.com/google/python-fire) 来做启动, 好处是任意函数都可以不需要装饰直接命令行可调用, 缺点是传入的是模块/函数名, 还是需要调用者知道模块具体文件/命名. 
+也有很多代码 [fire](https://github.com/google/python-fire) 来做启动, 好处是任意函数都可以不需要装饰直接命令行可调用, 缺点是传入的是模块/函数名, 还是需要调用者知道模块具体文件/命名.
 
 我们项目的主体沿袭了一个老的flask项目, 并使用用了 [flask-script](https://flask-script.readthedocs.io/)
 作为命令管理工具, 因此最小改动沿袭了这个命令行帮助库.

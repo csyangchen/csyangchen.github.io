@@ -6,15 +6,15 @@ ref: <https://book.douban.com/subject/26915970/>
 
 - 编程层面 (搬砖砌墙):
   - 结构化编程: 模块拆分, 函数, 功能解耦
-  - 面向对象编程: 封装, 继承, 多态 (接口, DI, ...) 
+  - 面向对象编程: 封装, 继承, 多态 (接口, DI, ...)
   - 函数式编程: 不变性
   - 自由度的约束
-- 组件层面 (盖房间): 
+- 组件层面 (盖房间):
   - SOLID原则 (SRP/OCP/LSP/ISP/DIP)
-  - 组件组织三角折衷: 
-    - REP (Reuse/Release Equivalence): 按照便于复用组织, 兼容性保证 
+  - 组件组织三角折衷:
+    - REP (Reuse/Release Equivalence): 按照便于复用组织, 兼容性保证
     - CCP (Common Closure): 按照变更组织结构, 便于维护, ~ SRP
-    - CRP (Common Reuse): 按照发布最小变更组织, 避免无用的依赖, ~ ISP 
+    - CRP (Common Reuse): 按照发布最小变更组织, 避免无用的依赖, ~ ISP
   - SDP (solid dependency principle) / SAP (solid abstract principle)
     - 越稳定的越需要抽象接口化, IA图
 - 架构层面 (整体建筑):
@@ -24,7 +24,7 @@ ref: <https://book.douban.com/subject/26915970/>
     - 功能
     - 模型
   - 团队拆分: 按照分层/功能特性/组件/具体业务分组
-  - 解耦: 
+  - 解耦:
     - 代码层面/部署层面/服务层面
     - 代码层面依赖/运行库依赖/进程级别依赖/服务调用依赖
   - 架构设计同心圆

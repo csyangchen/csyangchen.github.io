@@ -128,14 +128,14 @@ update table set v=... where k=2;
 
 # pymsql多语句支持
 
-pymysql库的`execute`逻辑是面向单语句执行设计. 对于多语句执行的结果, 只记录了第一条结果返回. 如何拿到批量执行多条语句的结果呢? 
+pymysql库的`execute`逻辑是面向单语句执行设计. 对于多语句执行的结果, 只记录了第一条结果返回. 如何拿到批量执行多条语句的结果呢?
 
 看一下MySQL的写交互流程, 正常流程下都是简单的一问一答机制:
 
 - 发送请求消息 [COM_QUERY](https://dev.mysql.com/doc/internals/en/com-query.html#packet-COM_QUERY)
 - 收到响应消息 [COM_QUERY_Response](https://dev.mysql.com/doc/internals/en/com-query-response.html#packet-COM_QUERY_Response)
   - 对于正常写入语句返回的是 [OK_Packet](https://dev.mysql.com/doc/internals/en/packet-OK_Packet.html),
-    包含了影响行数, 写入自增ID等信息, 
+    包含了影响行数, 写入自增ID等信息,
     其中 `status_flag & SERVER_MORE_RESULTS_EXISTS` 标记是否还有消息, 如果有的话客户端应该继续消费完
 
 然而, pymysql每次执行的时候忽略了未消费完的消息

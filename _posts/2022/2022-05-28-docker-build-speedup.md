@@ -68,14 +68,14 @@ docker build .build-base
 ```
 
 更好的办法是利用[`.dockerignore`](https://docs.docker.com/engine/reference/builder/#dockerignore-file),
-忽略不需要传入build context的文件. 加载顺序是优先查找`{dockerfile}.dockerignore`, 默认是用构建目录的`.dockerignore`. 
+忽略不需要传入build context的文件. 加载顺序是优先查找`{dockerfile}.dockerignore`, 默认是用构建目录的`.dockerignore`.
 
 ```
 > cat base.Dockerfile.dockerignore
 /**
 !requirements.txt
-# 基础镜像构建 
-> docker build -f base.Dockerfile . 
+# 基础镜像构建
+> docker build -f base.Dockerfile .
 ```
 
 同理, 构建业务镜像的时候也一定要编写`.dockerignore` (至少不能少于`.gitignore`),
@@ -126,7 +126,7 @@ RUN pip install -r requirements.txt
 
 依赖删除不建议如此操作的几个理由:
 1. `requirements.txt`里面删除的依赖其实还在, 如果还有旧依赖调用还是可以跑通的, 没有删干净, 重新全量构建后会失败, 导致构建的不确定性
-2. 即便主动`pip uninstall`了, 基础镜像大小并没有随之减少   
+2. 即便主动`pip uninstall`了, 基础镜像大小并没有随之减少  
 
 # BuildKit save the day
 
@@ -164,7 +164,7 @@ DOCKER_BUILDKIT=1 docker build --progress=plain ...
 # 精简再精简
 
 不过最有效的办法, 还是从源头上减少不必要的外部依赖, 精简代码.
-本着"应删尽删, 非必要不加依赖"的指导原则, 确保整个项目的精简, 是加速构建的最优手段. 
+本着"应删尽删, 非必要不加依赖"的指导原则, 确保整个项目的精简, 是加速构建的最优手段.
 
 # Reference
 

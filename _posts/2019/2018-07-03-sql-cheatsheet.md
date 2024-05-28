@@ -16,7 +16,7 @@ Usage | Shell | MySQL | Postgresql | Clickhouse
 昨日 | date +%Y-%m-%d -d'-1 day' | date_add(now(), interval 1 day) | date_add('day', -1, current_date) | today()-1 / yesterday()
 时间戳转日期 | date +'%Y-%m-%d %H:%M:%S' -d @1136214245 | from_unixtime(1136214245) | timestamp 'epoch' + 1136214245 * interval '1 seconds' | toDateTime(1136214245)
 日期转时间戳 | date +%s -d '2006-01-02 15:04:05' | unix_timestamp('2006-01-02 15:04:05') | extract(epoch from '2006-01-02 15:04:05'::timestamp) | toUnixTimestamp('2006-01-02 15:04:05')
-算两个时间间隔 | | | |  
+算两个时间间隔 | | | | 
 
 - [MySQL](https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html)
 - [Postgresql](https://www.postgresql.org/docs/current/static/functions-datetime.html)

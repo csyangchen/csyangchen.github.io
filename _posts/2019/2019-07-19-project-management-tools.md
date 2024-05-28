@@ -12,7 +12,7 @@ Kanban一开始我还以为是拼音, 结果原来是日本人发明的词, 来�
 
 纵向分行看事儿的维度 (Swimlines/泳道). 按照人, 或者组来分.
 
-一横一竖, 谁事儿多, 谁进展较快, 一目了然. 方便进行横向的进度对比. 
+一横一竖, 谁事儿多, 谁进展较快, 一目了然. 方便进行横向的进度对比.
 
 优先级管理: 每一列通过上下顺序标识优先级.
 
@@ -59,7 +59,7 @@ JQL很强大, 基于JQL可以做任何自己想看的面板.
 
 JIRA也意识到这个问题, 所以支持 [Simplified Workflow](https://confluence.atlassian.com/jirasoftwareserver0713/using-the-simplified-workflow-965542321.html)
 
-和gitlab能够做到自动issue关联. 
+和gitlab能够做到自动issue关联.
 
 ## JIRA vs OKR 映射
 
@@ -83,7 +83,7 @@ Jira + Confluence 丐版.
 
 工作流是固定的.
 
-支持需求关联管理. 
+支持需求关联管理.
 
 需要人工登记工时.
 

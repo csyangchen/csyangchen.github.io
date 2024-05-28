@@ -16,14 +16,14 @@ Go语言自带了增量构建/测试, 但是由于是基于文件内容变更的
 
 ```
 def get_effected_files(changed_files):
-    # 提取项目依赖关系, 
+    # 提取项目依赖关系,
     dag = get_deps()  # {模块: 依赖模块集合}
     # 拍平依赖传导, 不区分直接和间接依赖关系
     flat_dag = flat(dag)
     # 计算反向依赖
     reversed_flag_dag = reverse(flat_dag)
     # 合并变更文件影响的模块
-    return set().union(*[reversed_flag_dag[file2mod(file)] for file in changed_files]) 
+    return set().union(*[reversed_flag_dag[file2mod(file)] for file in changed_files])
 
 def reverse(dag, keep_leaf=True):
     ret = defaultdict(set)
@@ -161,7 +161,7 @@ from config import MYSQL_DB1_DSN  # 数据库DB1的指向变量
 
 @pytest.mark.skipif(not MYSQL_DB1_DSN, "MYSQL_DB1_DSN not set")
 def test_xxx():
-    ... 
+    ...
 ```
 
 DB1的变更依赖通过`MYSQL_DB1_DSN`变量依赖抓出来. 当然缺点也很显然, 依赖提取粒度太粗.
@@ -186,4 +186,4 @@ def db_query(dsn, query):
 
 依赖提取多种手段, 一种是通过额外再写文档的方式备忘记录, 缺点在于很额外的维护工作量, 以及很容易和实际依赖关系产生不一致.
 另外一种是, 直接对实际代码/服务做提取. 提取手段分静态分析提取, 和动态调用链提取. 静态提取对于开发规范的执行有很强的要求.
-动态提取, 小到单服务级别可以类比profiling技术, 大到系统层面可参考tracing手段. 
+动态提取, 小到单服务级别可以类比profiling技术, 大到系统层面可参考tracing手段.

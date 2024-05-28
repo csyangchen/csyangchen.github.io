@@ -21,7 +21,7 @@ tags: mysql
     );
 
 由于每天只能有一份统计数据, 所以自然要做唯一性约束.
-常见的查询是跟据vid/gid筛选dt一天或者某段时间数据. 
+常见的查询是跟据vid/gid筛选dt一天或者某段时间数据.
 由于业务用了django框架的orm, 没办法去掉id字段.
 由于数据量级较大, 导致读写非常慢.
 
@@ -41,21 +41,21 @@ tags: mysql
     subpartitions 8 (
         partition pYYMMDD values less than maxvalue
     );
-    
+   
 其中分区由脚本每日定期更新.
 
-注意分区表, 由于索引是每个分区单独创建, 因此不能有唯一索引. 好在自增id本身保证了唯一性, 不用再加唯一约束. 
+注意分区表, 由于索引是每个分区单独创建, 因此不能有唯一索引. 好在自增id本身保证了唯一性, 不用再加唯一约束.
 由于数据库每次启动的时候, 要对自增ID取max, 所以必须要对其创建索引. ID字段可以等业务层面彻底抛弃后干掉.
 
 针对vid子分区是为了进一步优化针对vid的点查询, 也可以不要.
 
 分区表的缺点: 索引每个分区单独创建, 所以如果查询涉及到多个分区的时候, 索引查询开销加大.
 
-## 主键顺序问题: 
+## 主键顺序问题:
 
-由于每天是按天产生新的数据, 从写入优化角度来说, 对于主键应当是 `primary key (dt, vid, gid)`. 
+由于每天是按天产生新的数据, 从写入优化角度来说, 对于主键应当是 `primary key (dt, vid, gid)`.
 但是由于已经对dt分区, 因此主键字段可以放在最后, 从而省掉对于vid的额外索引.
-    
+   
 需要把时间字段摆在前面的场景:
 
 1. 顺序写入, 提高写入性能: 因为数据页按照主键顺序排列, 时间放在前面, 顺序写入性能较好好, 避免数据页分裂, 以及频繁的随机写
@@ -68,7 +68,7 @@ tags: mysql
         id int,
         cnt int not null default 0,
         primary key (ts, id)
-    ) partition by range(to_days(ts)) 
+    ) partition by range(to_days(ts))
     (partition pYYMMDD values less than maxvalue)
     ;
 
@@ -123,19 +123,19 @@ tags: mysql
         primary key (uid)
         -- ...
     ) partition by key(uid) partitions 32;
-       
+      
 
 ## 终极MySQL KV表
 
     create table kv (
         payload json not null,
-    
+   
         p_int tinyint generated always AS (payload->>"$.int") not null,
         key (p_int),
-    
+   
         p_str varchar(64) generated always AS (payload->>"$.str"),
         key (p_str(4)),
-    
+   
         id int generated always as (payload->>'$.id') stored not null,
         primary key (id)
         ) partition by hash(id) partitions 32;
@@ -149,7 +149,7 @@ tags: mysql
 
 业务上, 常常因为各别业务需求, 需要增加属性字段.
 
-如果属性字段非常稀疏, 那么将每个字段都单独列, 并不是个很好的注意. 可以通过上述的 json 来只存存在的数据列. 
+如果属性字段非常稀疏, 那么将每个字段都单独列, 并不是个很好的注意. 可以通过上述的 json 来只存存在的数据列.
 
 注意对于JSON字段, 不支持增量更新, 必须手动覆盖. 如果业务层面做, 就要开事务, 如果写入SQL语句里面做, 就很丑:
 
@@ -172,6 +172,6 @@ k用枚举类表名可能的键值, 并通过键值k来决定v的解析方法. �
 # Reference
 
 - 垃圾django不支持多列主键: <https://code.djangoproject.com/wiki/MultipleColumnPrimaryKeys>
-- [之前相关的一篇文章](http://www.csyangchen.com/mysql-57-json-virtual-column-index.html) 
+- [之前相关的一篇文章](http://www.csyangchen.com/mysql-57-json-virtual-column-index.html)
 
 <!--- TODO relative link --->

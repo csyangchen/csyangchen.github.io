@@ -4,12 +4,14 @@ title: 数据压缩及模型量化
 
 compression / bit reduction
 
-- lossless 无损 / 数据压缩 / 模型tokenization过程 
+- lossless 无损 / 数据压缩 / 模型tokenization过程
 - lossy 有损 / 视频, 音频 / 模型训练过程
 
-考量: 压缩比 / 压缩速度 / 解码速度 / 数据失真 (lossy)
-
-机器学习
+问题考量角度:
+- 压缩比
+- 压缩速度
+- 解码速度
+- (对于有损压缩而言) 数据失真度 (lossy)
 
 # 压缩过程
 
@@ -38,7 +40,7 @@ compression / bit reduction
 哈夫曼(huffman)码: 最优前缀编码 (Kraft不等式)
 
 - 前缀编码 / prefix code: 变长编码, 不会是其他的前缀, 一位一位读, 只要在字典中即返回
-  - 流式解析, 解析时保持当前编码表匹配位即可 
+  - 流式解析, 解析时保持当前编码表匹配位即可
 - 定长编码: 固定宽度切割后查找, 可并行
   - 均长=log(N), 同分布时最优编码
   - 对于数据库列编码还挺有用的, 快速定位到第几行的数据
@@ -82,12 +84,11 @@ n-gram的所有可行分割后, 找最优编码表
 
 # 数据压缩算法
 
-方法
 - dictionary method: 基于词典替换
 - static method: 分析全数据, 构建词典, 然后再编码
   - 相当于先传词典, 再传对于词典引用
   - two-pass method
-- adaptive method: 扫一遍, 回看一段历史数据, 数据即词典
+- adaptive method: 扫一遍, 回看一段历史数据, 数据本身即词典, 后面的重复序列不断引用前面的位置
   - one-pass method
 
 # 压缩算法/格式
@@ -152,7 +153,7 @@ n-gram的所有可行分割后, 找最优编码表
 图像 = 像素(色彩) * 长 * 宽
 
 色彩
-- 1bit 黑白世界 
+- 1bit 黑白世界
 - 8bit 灰度
 - 8bit 彩色 256 种颜色
 - 24bit=256*3 / RGB
@@ -175,7 +176,7 @@ n-gram的所有可行分割后, 找最优编码表
   - 空域/时域信号变频域信号
   - MDCT / M for modified / 常用于音频
 - FT / fourier transform / 傅里叶变换 / 三角函数组合拟合函数 / 平稳信号
-- WT / wavlet transform / 小波变换 / 复数域, 频域+时域信号, 含FT 
+- WT / wavlet transform / 小波变换 / 复数域, 频域+时域信号, 含FT
 
 常见图像/视频/音频格式
 - GIF (Graphics Interchange Format)
@@ -196,9 +197,9 @@ n-gram的所有可行分割后, 找最优编码表
   - AAC / advanced audio coding / MPEG-2 Part 7 / MPEG-4, MP3的后继者
     - MDCT only, 对比MP3更高压缩效率
   - MP4: MPEG-4 Part 14
-    - originate from QuickTime by Apple 
+    - originate from QuickTime by Apple
     - 不光存储视频音频, 也可以保存字幕, 图像等
-- h264 / AVC (Advanced Video Coding) / MPEG-4 Part 10 / 目前最常见 
+- h264 / AVC (Advanced Video Coding) / MPEG-4 Part 10 / 目前最常见
 - h265 / HEVC (High Efficiency Video Coding) / MPEG-H
   - HEIF: High Efficiency Image File
   - HEVC: High-Efficiency Image Container / HEVC in HEIF
@@ -207,7 +208,7 @@ n-gram的所有可行分割后, 找最优编码表
 - VP9 by google / 也是默认打不开, 需要转码的
 - KPG: Kai's Power Goo (PS的一个插件???) / 快手直播等使用, 导致我们要转一遍
 
-# 拟合问题 / 模型学习
+# VS 模型学习
 
 拟合问题
 - 结构: `f(x)`
@@ -229,7 +230,7 @@ f / 先验编码表
 - 编码器输出数据: 压缩后的信息, 可再转用它途
 - 由于生成过程引入了随机性, 解码结果不是确定的
 
-存在合理性 / 信念: 
+存在合理性 / 信念:
 - 输入数据(语言/图像)是极度冗余的
 - 在给定的小场景下, 各种简称是不会导致歧义的
 
@@ -245,7 +246,7 @@ f / 先验编码表
 - 特征选择, 从输入上就只用有显著性的特征维度训练, 舍弃掉提点有限的特征维度
 - 剪枝 / Pruning:
   - 直接舍弃部分结构
-  - 简化模型大小 
+  - 简化模型大小
   - 避免过拟合
 - 知识蒸馏 / KD / knowledge distillation
   - 先训练出老师模型

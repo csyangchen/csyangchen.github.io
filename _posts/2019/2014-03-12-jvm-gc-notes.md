@@ -60,7 +60,7 @@ GC引擎(GC collector)的选择:
 
 ### GC调节策略
 
-GC算法是一个策略问题, 主要关注的点(按照优先级从高到低): 
+GC算法是一个策略问题, 主要关注的点(按照优先级从高到低):
 
 1. 响应速度(即减少GC时间)
 2. GC效率
@@ -87,10 +87,10 @@ GC算法是一个策略问题, 主要关注的点(按照优先级从高到低):
 - [Java SE 6 HotSpot Virtual Machine Garbage Collection Tuning](http://www.oracle.com/technetwork/Java/Javase/gc-tuning-6-140523.html)
 - [JVM的GC简介和实例](http://www.searchtb.com/2013/07/jvm-gc-introduction-examples.html)
 
-## 附: 
+## 附:
 
     // jmap检视内存使用情况的实例
-    
+   
     > jmap -heap 46106
     Attaching to process ID 46106, please wait...
     Debugger attached successfully.

@@ -3,8 +3,8 @@ title: 服务器安装
 ---
 
 在工作和学习中, 常需要在windows环境下通过虚拟机软件安装Linux系统, 作为测试环境.
-另外, 有时后个人需要维护一台VPS. 
-在服务器的安装和维护过程中, 常遇到各种问题. 在这里, 本着能偷懒就偷懒的原则, 这里记录下来, 作为备忘. 
+另外, 有时后个人需要维护一台VPS.
+在服务器的安装和维护过程中, 常遇到各种问题. 在这里, 本着能偷懒就偷懒的原则, 这里记录下来, 作为备忘.
 
 本笔记基于centos系列.
 
@@ -17,7 +17,7 @@ title: 服务器安装
 除了NAT网络, 另外加一个Host only adapter, 以获取一个固定IP.
 
 配置:
-    > vi /etc/sysconfig/network-scripts/ifcfg-eth1 # 
+    > vi /etc/sysconfig/network-scripts/ifcfg-eth1 #
     # 作如下修改
     ONBOOT=yes
     BOOTPROTO=static
@@ -26,7 +26,7 @@ title: 服务器安装
     > service network restart
 
 windows下测试是否联通:
-    
+   
     > ping 192.168.56.123
 
 **注意:** 注意由于默认情况下
@@ -40,16 +40,16 @@ windows下测试是否联通:
 
 为了更方便的使用虚拟机, 我们通常需要安装VirtualBox的guest addon. 这样就可以把宿主机上的目录很方便的加载在虚拟机上, 进行读写.
 
-手动加载`C:\Program Files\Oracle\VirtualBox\VBoxGuestAdditions.iso`, 
-    
+手动加载`C:\Program Files\Oracle\VirtualBox\VBoxGuestAdditions.iso`,
+   
     # 安装依赖
     > yum install kernel-devel -y
-    # 加载iso文件  
+    # 加载iso文件 
     > mount -r -t auto /dev/sr0 /mnt
     > /mnt/VBoxLinuxAdditions.run
-    
+   
 加载目录
-    
+   
     > mount -t vboxsf <宿主机共享目录名> <目标路径>
 
 ## 安全措施
@@ -80,14 +80,14 @@ SSH服务防御措施
     # PasswordAuthentication no
     # 改变默认端口
     Port 22
-    
+   
     # 禁止root登陆
     # PermitRootLogin no
 
 个人觉得SSH禁止密码登录就OK了.
 
 公钥添加到`.ssh/authorized_keys`时, 要特别注意权限问题:
-    
+   
     > chmod 700 .ssh/
     > chmod 600 .ssh/authorized_keys
 

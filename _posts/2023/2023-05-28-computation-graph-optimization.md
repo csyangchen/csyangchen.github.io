@@ -37,7 +37,7 @@ Python程序优化套路: Python写意图, C改写实现
 
 > Python for clarity, C for performance
 
-最简单的CPU后端: 
+最简单的CPU后端:
 - 计算图逻辑翻译为C++代码后执行, C++代码编译器再负责优化实现
 - 再进一步, 写点编译优化注解
 
@@ -46,7 +46,7 @@ Python程序优化套路: Python写意图, C改写实现
   - AOT (Ahead of Time) 编译
 - Numba
   - JIT (Just in Time) 方式编译
-  - 针对numpy, 翻译目标为LLVM 
+  - 针对numpy, 翻译目标为LLVM
   - inlining, loop fusion, ...
   - 注意: 导致的额外依赖特别多, 以及会导致显著的额外内存开销, 业务上尽量绕开和这个打交道的 !!!
 - ...
@@ -79,7 +79,7 @@ DAG
 - 执行前需要跑一下编译过程 `keras.model.compile`
 - 类比编译型语言(C/Java/Go/...)
 
-动态图 
+动态图
 - Eager Execution 模式
 - 单算子会在计算图中立即执行得到结果, 各算子/函数视情况单独优化实现
 - 可以很好的和Python其他代码逻辑交互, 灵活便于调试
@@ -240,7 +240,7 @@ def mul(a, b, n):
 
 容器化推断环境运行, 默认拿到的是宿主机器核数, 实际上限制了CPU数, 错误的安排线程数, 反而会导致性能下降
 
-需手动基于容器配置感知修改OMP_NUM_THREADS, 或者改session_option 
+需手动基于容器配置感知修改OMP_NUM_THREADS, 或者改session_option
 
 ## 计算图训练优化
 
@@ -258,7 +258,7 @@ def mul(a, b, n):
 
 # 努力编写可导出的模型代码
 
-现状: 训练时torch逻辑, 推断时numpy逻辑, 写双份. 
+现状: 训练时torch逻辑, 推断时numpy逻辑, 写双份.
 
 期望: 预处理/后处理尽可能打包到模型中, 避免逻辑同步维护及正确性校验工作, 确保训练推断一致; 以及能显著优化推断性能
 

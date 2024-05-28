@@ -9,7 +9,7 @@ SQL面向的数据结构: 二维表
 语法
 
 ```
-func(col) over ([partition by col...] [order by ...] [rows between ...])   
+func(col) over ([partition by col...] [order by ...] [rows between ...])  
 ```
 
 - partition: 数据分组
@@ -24,7 +24,7 @@ func(col) over ([partition by col...] [order by ...] [rows between ...])
     - 注意不支持去重相关逻辑, 理解为必须是可分治的函数
   - 窗口函数
     - 排行类
-        - row_number >= rank >= dense_rank 
+        - row_number >= rank >= dense_rank
         - 百分比相关
           - percent_rank = (rank-1) / (total-1)
             - 不算上自己, 落后了多少人
@@ -109,7 +109,7 @@ SQL执行计划阶段
 - 对于窗口计算结果筛选的, 需要做子查询再筛选
 - 可以对计算结果排序截断, 不过一般没啥用
 
-另外窗口函数不能嵌套调用. 
+另外窗口函数不能嵌套调用.
 
 # 业务场景
 
@@ -131,7 +131,7 @@ SQL执行计划阶段
 
 Clickhouse暂不支持相关功能
 
-- group by + array_aggs + array_sort 或全局order by 将每个窗口数据合并到一个数组 
+- group by + array_aggs + array_sort 或全局order by 将每个窗口数据合并到一个数组
 - array map/reduce 套路, 维护局部状态, 实现相关计算
 - array_join 数组换回多行
 
@@ -144,7 +144,7 @@ Clickhouse暂不支持相关功能
 
 # (不)相关SQL特性
 
-grouping sets / cube / rollup 
+grouping sets / cube / rollup
 
 一次性多维度统计汇总.
 
@@ -168,7 +168,7 @@ select table, sum(bytes) / s from system.parts group by table
 
 select *, s / sum(s) over () from (
 select table, sum(bytes) as s from parts group by table
-) 
+)
 ```
 
 全窗口计算值应该不会每一行重复计算吧.

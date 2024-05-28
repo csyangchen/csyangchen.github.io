@@ -20,7 +20,7 @@ RabbitMQ主要是Python的celery无脑引入进来的.
 
 # Kafka服务架构
 
-装逼之问, Kafka性能为什么如此优秀? 
+装逼之问, Kafka性能为什么如此优秀?
 - 基于日志文件, 顺序读写 O(1) vs O(log n)
 - 充分利用操作系统的读写内存页缓存
 - sendfile, zero-copy, 减少用户态切换, 直接socket缓冲区写文件, 数据零拷贝.
