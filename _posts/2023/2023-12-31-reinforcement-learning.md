@@ -2,7 +2,7 @@
 title: 强化学习
 ---
 
-主要是本书的阅读笔记: [强化学习](https://book.douban.com/subject/34809689/) by [Rich Sutton](http://incompleteideas.net/)
+本书的阅读笔记: [强化学习](https://book.douban.com/subject/34809689/) by [Rich Sutton](http://incompleteideas.net/)
 
 # RL / Reinforcement Learning
 
@@ -62,7 +62,7 @@ EE策略
 再进一步, 奖励函数是有状态的, 以及受行为及奖励结果动态变化的, 比如基于当前机子累计收益给奖励, 如确保胜率, 确保收益, 及常见"十抽保SSR"之类等等.
 则需要对于每个机子当前处于何种状态做预测, 以及当下状态下的最有选择评估.
 
-探索与利用的困境: 应该面试到第几个人录用, 应该和第几个女友结婚?
+探索与利用的困境: 应该面试到第几个人录用, 应该和第几任女友结婚?
 
 如果人生是无限的, 或者可以随时重来, 那么多探索, 可以发现全部的可能性; 可惜在有限的一次生命中, 只能看一步走一步.
 
@@ -408,8 +408,8 @@ state space planning
 value/policy生成样本数据并用于更新回value/policy的称作direct RL.
 反之, 通过学习更新回模型, 并模型预测出value/policy的过程, 称之为model learning.
 
-从监督学习的视角来看, 模型更新是基于损失梯度回去的. RL是在是在试图习得评价函数, 并相应的制定最优策略. 当然你也可以说损失就是评价函数.
-
+从监督学习的视角来看, 模型更新是基于损失梯度回去的. RL是在是在试图习得评价函数, 并相应的制定最优策略.
+当然你也可以说损失就是评价函数.
 
 # Tree Search / 检索树方法 
 
@@ -521,44 +521,21 @@ DQN: deep Q-network, Q-learning with deep convolutional ANN.
 Q-learning with **experience replay**: 记住并不断重放 (St, At, Rt+1, St+1). 
 从而提高学习收敛的稳定性.
 
-# AlphaGo
 
-围棋为什么更难? 维度更大, 且围棋的局势更难评估. 象棋等胜负更依赖单子能力, 相对较为容易.
+# TODO RL算法分类
 
-MCTS + CNN的工程上的胜利
+是否同策略, 状态/行动空间离散还是连续, 
 
-三个网络:
-- 轻策略网络: 用于做rollout, 即跑棋局模拟, 监督学习后不再更新, 足够快从而能优先时间内跑很多模拟结果出来
-- 重策略网络: 做sweeping策略, 即当下考虑每个落子的概率
-- 价值网络: 做局势评估
-
-局势评估 = r * v(s) + (1-r) * G, 即模拟和价值函数结果的组合, r参数更信任价值函数结果还是模拟结果
-
-MCTS策略: 树结构检索+上述三网络作用的结果
-
-初始用人类棋谱做监督学习, 然后self-play生成数据训练更新重策略网络和价值网络
+https://en.wikipedia.org/wiki/Reinforcement_learning
 
 
-## AlphaGo Zero
+# 附录
 
-更清爽版本
-- 一个更大的CNN输出两个头
-- 不用人类棋谱训练
-- 更简单的棋局编码方式
-- 价值评估不跑模拟了 ???
+不属于本书内容的记录
 
-注意上面重策略网络和价值网络是单独的对于自生成数据的训练, 但是实际评价策略又是基于MCTS的, 消除这种异构性.
+## Tree Search
 
-AlphaZero: 不局限于围棋 
-
-MuZero: 连规则都不知道
-
-AlphaStar: multi-agent reinforcement learning
-
-
-# Tree Search
-
-为什么minimax方法和RL不同???
+TODO 为什么minimax方法和RL不同???
 
 minimax认为对手和自己一样, 即model=policy.
 
@@ -566,7 +543,7 @@ alpha-beta cutoff:
 
 对于棋类游戏, 落子后的局势判定称之为 position value function, 不能视作 state / action value function
 
-# 针对棋类问题的讨论
+## 针对棋类问题的讨论
 
 何为棋类游戏?
 - 确定性: 不存在概率触发机制, 没有运气成分
@@ -591,6 +568,8 @@ minimax: 己方, maximizer, 最大化score; 对手, minimizer, 最大化自己�
 Game Theory
 
 零和游戏: 自己得分 + 对手得分 = 0, 棋类游戏自然是零和游戏
+
+纳什均衡
 
 > Zermelo's theorem: 在二人的有限交互进行游戏中, 如果双方皆拥有完全的资讯, 并且运气因素并不牵涉在游戏中, 那先行或后行者中必有一方有不败策略
 
