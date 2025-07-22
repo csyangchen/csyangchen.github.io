@@ -70,11 +70,11 @@ RECIPE = {
     },
     # drill
     'iron_ore': {
-        'time': '.3',
+        'time': .3,
         'src': 'drill',
     },
     'copper_ore': {
-        'time': '.3',
+        'time': .3,
         'src': 'drill',
     },
 }
@@ -189,7 +189,7 @@ def test_decide_order():
     print_line(sort_by_type(l))
 
 
-def print_line(l):w
+def print_line(l):
     print("|".join(l))
     print(len(l), get_distance(l))
 
