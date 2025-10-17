@@ -94,7 +94,7 @@ def get_dep(item, amount=1) -> dict[str, int]:
     #
     factory = get_factory_name(item)
     # num_in = len([k for k in recipe if k not in ('src', 'time')])
-    result[factory] += amount
+    result[item] += amount
     result[f"{factory}_time"] += recipe['time'] * amount
     result[f"{factory}_unit_speed"] += 1 / recipe['time']
     #
@@ -140,13 +140,13 @@ def produced_by(item):
     return [x for x in recipe if x not in ('src', 'time')]
 
 
-def decide_order(item):
+def decide_line_layout(item):
     ret = [item]
     need_items = produced_by(item)
     random.shuffle(need_items)  # TODO
     ret.extend(need_items)
     for need_item in need_items:
-        ret.extend(decide_order(need_item))
+        ret.extend(decide_line_layout(need_item))
     return uniq(ret)
 
 
@@ -175,18 +175,21 @@ def merge(l1, l2):
     return choice1
 
 
-def test_decide_order():
+def test_decide_layout():
     print()
-    l1 = decide_order('red_pack')
+    print(get_dep("red_pack"))
+    l1 = decide_line_layout('red_pack')
     print_line(l1)
-    l2 = decide_order('green_pack')
-    print_line(l2)
-    l3 = merge(l1, l2)
-    print_line(l3)
-    print_line(sort_by_type(l3))
-    l = decide_order('red_green_pack')
-    print_line(l)
-    print_line(sort_by_type(l))
+    l1 = decide_line_layout('red_pack')
+    print_line(l1)
+    # l2 = decide_order('green_pack')
+    # print_line(l2)
+    # l3 = merge(l1, l2)
+    # print_line(l3)
+    # print_line(sort_by_type(l3))
+    # l = decide_order('red_green_pack')
+    # print_line(l)
+    # print_line(sort_by_type(l))
 
 
 def print_line(l):
@@ -203,3 +206,29 @@ def sort_by_type(l):
         return -1
 
     return sorted(l, key=fun_key)
+
+
+def test_shortest_layout():
+    nodes = {
+        "a": 3,
+        "b": 2,
+        "c": 1,
+    }
+    edges = {
+        ("a", "c"): 2,
+        ("b", "c"): 1,
+    }
+    print(get_layout_total_volume(nodes, edges, ["a", "b", "c"]))
+    print(get_layout_total_volume(nodes, edges, ["a", "c", "b"]))
+
+
+def get_layout_total_volume(nodes: dict, edges: dict, layout: list):
+    total_volume = 0
+    for (src, dst), w in edges.items():
+        x = layout.index(src)
+        y = layout.index(dst)
+        if x > y:
+            x, y = y, x
+        distance = sum(nodes[i] for i in layout[x:y])
+        total_volume += distance * w
+    return total_volume
