@@ -1,5 +1,6 @@
 ---
 title: 缺氧
+published: false
 ---
 
 异星工厂浅尝辄止后, 又循着推荐沉迷了很长一段时间[缺氧](https://store.steampowered.com/app/457140/).
